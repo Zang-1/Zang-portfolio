@@ -961,13 +961,13 @@ if (typeof Swiper !== 'undefined') {
         centeredSlides: true,
         slidesPerView: 'auto',
         loop: true,
-        speed: 600, // Balanced speed for smooth but snappy feel
+        speed: 500,
         coverflowEffect: {
-            rotate: 40,
+            rotate: 25,
             stretch: 0,
-            depth: 150,
+            depth: 120,
             modifier: 1,
-            slideShadows: false, // Turn off slideShadows as they can cause lag over iframes
+            slideShadows: false,
         },
         navigation: {
             nextEl: '.swiper-button-next',
@@ -976,6 +976,36 @@ if (typeof Swiper !== 'undefined') {
         pagination: {
             el: '.swiper-pagination',
             clickable: true,
-        }
+        },
+        // Disable touch/drag on iframe slides to prevent jank
+        simulateTouch: false,
+        allowTouchMove: false,
+    });
+
+    // ========================================
+    // SINGLE SONG PLAYBACK
+    // Pause all Spotify iframes except the active slide
+    // ========================================
+    function pauseAllSpotifyExceptActive() {
+        const allIframes = document.querySelectorAll('.music-swiper .swiper-slide iframe');
+        const activeSlide = document.querySelector('.music-swiper .swiper-slide-active');
+        const activeIframe = activeSlide ? activeSlide.querySelector('iframe') : null;
+
+        allIframes.forEach(iframe => {
+            if (iframe !== activeIframe) {
+                // Send pause command via Spotify Embed API
+                iframe.contentWindow.postMessage({ command: 'pause' }, '*');
+            }
+        });
+    }
+
+    // Pause non-active songs whenever the slide changes
+    musicSwiper.on('slideChange', () => {
+        pauseAllSpotifyExceptActive();
+    });
+
+    // Also pause when user clicks navigation arrows
+    musicSwiper.on('slideChangeTransitionEnd', () => {
+        pauseAllSpotifyExceptActive();
     });
 }

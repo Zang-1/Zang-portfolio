@@ -2106,17 +2106,20 @@ img {
     width: 100%;
     padding: 40px 0;
     overflow: hidden;
+    contain: layout style;
 }
 
 .swiper-slide {
     width: 280px;
     height: 352px;
-    /* Let Swiper handle transform duration inline */
-    transition-property: transform;
-    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    /* Smooth GPU-accelerated transition */
+    transition-property: transform, opacity;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
     transform-style: preserve-3d;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    contain: layout paint;
 }
 
 /* Make non-active slides faded/blurry for 3D effect */
@@ -2131,11 +2134,13 @@ img {
     box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     background: var(--bg-card);
     transform: translateZ(0);
+    -webkit-transform: translateZ(0);
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     overflow: hidden;
-    position: relative; /* Added to position the overlay */
-    /* Add independent filter transition so it remains smooth during swipe */
-    transition: filter 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative;
+    /* Faster filter transition to reduce jank */
+    transition: filter 0.3s ease-out;
     will-change: filter;
     filter: blur(0px) brightness(1);
 }
@@ -2154,6 +2159,7 @@ img {
     width: 100%;
     height: 100%;
     transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .music-swiper .swiper-button-next,
