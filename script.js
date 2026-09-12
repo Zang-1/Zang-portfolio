@@ -21,7 +21,7 @@
             const dark = root.dataset.theme !== 'light';
             icon.className = dark ? 'fas fa-moon' : 'fas fa-sun';
             btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
-            if (meta) meta.content = dark ? '#0B0F14' : '#F5F7FA';
+            if (meta) meta.content = dark ? '#0B0F14' : '#EDEFF3';
         };
 
         btn.addEventListener('click', () => {
@@ -116,9 +116,14 @@
 
             navbar.classList.toggle('is-scrolled', y > 12);
 
-            if (progress) {
-                const max = document.documentElement.scrollHeight - window.innerHeight;
-                progress.style.transform = `scaleX(${max > 0 ? Math.min(y / max, 1) : 0})`;
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            const ratio = max > 0 ? Math.min(y / max, 1) : 0;
+
+            if (progress) progress.style.transform = `scaleX(${ratio})`;
+
+            // the background orbs drift against the scroll through --sy
+            if (!reduceMotion) {
+                document.documentElement.style.setProperty('--sy', ratio.toFixed(4));
             }
 
             // scroll spy — the section whose top has passed the nav line
@@ -167,7 +172,33 @@
         onScroll();
     })();
 
-    /* ---------- 5. SCROLL REVEAL ---------- */
+    /* ---------- 5. AMBIENT BACKGROUND PARALLAX ---------- */
+    (function ambient() {
+        if (reduceMotion) return;
+
+        const root = document.documentElement;
+        // a coarse pointer means a touchscreen: there is nothing to follow
+        if (!window.matchMedia('(pointer: fine)').matches) return;
+
+        let x = 0, y = 0, queued = false;
+
+        const apply = () => {
+            queued = false;
+            root.style.setProperty('--mx', x.toFixed(4));
+            root.style.setProperty('--my', y.toFixed(4));
+        };
+
+        window.addEventListener('pointermove', (e) => {
+            // -1 .. 1 from the centre of the window
+            x = (e.clientX / window.innerWidth - 0.5) * 2;
+            y = (e.clientY / window.innerHeight - 0.5) * 2;
+            if (queued) return;
+            queued = true;
+            requestAnimationFrame(apply);
+        }, { passive: true });
+    })();
+
+    /* ---------- 6. SCROLL REVEAL ---------- */
     (function reveal() {
         const items = $$('[data-reveal]');
         if (!items.length) return;
@@ -188,7 +219,7 @@
         items.forEach(el => io.observe(el));
     })();
 
-    /* ---------- 6. MUSIC CAROUSEL ---------- */
+    /* ---------- 7. MUSIC CAROUSEL ---------- */
     (function music() {
         const node = $('.music-swiper');
         if (!node || typeof Swiper === 'undefined') return;
@@ -236,7 +267,7 @@
         swiper.on('slideChangeTransitionEnd', pauseInactive);
     })();
 
-    /* ---------- 7. GALLERY + LIGHTBOX ---------- */
+    /* ---------- 8. GALLERY + LIGHTBOX ---------- */
     (function gallery() {
         const framesHost = $('#galleryFrames');
         const album = $('#album');
