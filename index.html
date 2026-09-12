@@ -8,712 +8,388 @@
         content="Bao Giang - IT Student at Van Lang University. Passionate about technology, motorcycles, and billiards. No Pain No Gain.">
     <meta name="keywords" content="Bao Giang, IT Student, Van Lang University, Portfolio">
     <meta name="author" content="Bao Giang">
-    <title>Bao Giang-IT Student</title>
+    <meta name="theme-color" content="#0B0F14">
+    <title>Bao Giang — IT Student</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Swiper -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
-    <link rel="stylesheet" href="style.css?v=2.7">
+    <link rel="stylesheet" href="style.css?v=4.4">
+
+    <!-- restore saved theme before first paint to avoid a flash -->
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('theme');
+                if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+            } catch (e) { }
+        })();
+    </script>
 </head>
 
 <body>
-    <!-- ===== BACKGROUND INTERACTIVE CANVAS ===== -->
-    <canvas id="interactive-bg-canvas"></canvas>
-
-    <!-- ===== GLOBAL BACKGROUND EFFECTS ===== -->
-    <div class="global-bg-effects">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
-        <div class="grid-overlay"></div>
+    <!-- ambient background -->
+    <div class="bg-layer" aria-hidden="true">
+        <div class="bg-grid"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
     </div>
 
-    <!-- ===== NAVBAR ===== -->
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+    <!-- ===== NAV ===== -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="#hero" class="nav-logo">
-                <span class="logo-text">BG</span>
-                <span class="logo-dot">.</span>
+            <a href="#hero" class="nav-logo" aria-label="Bao Giang — home">
+                <span class="logo-mark">BG</span><span class="logo-dot">.</span>
             </a>
+
             <ul class="nav-links" id="navLinks">
-                <div class="nav-active-pill" id="navActivePill"></div>
+                <span class="nav-pill" id="navPill" aria-hidden="true"></span>
                 <li><a href="#hero" class="nav-link">Home</a></li>
                 <li><a href="#music" class="nav-link">Music</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#gallery" class="nav-link">Gallery</a></li>
-                <!-- <li><a href="#hobbies" class="nav-link">Hobbies</a></li> -->
-                <!-- <li><a href="#timeline" class="nav-link">Timeline</a></li> -->
-                <!-- <li><a href="#goals" class="nav-link">Goals</a></li> -->
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
+
             <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <button class="icon-btn" id="themeToggle" aria-label="Switch colour theme">
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
-                <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- ===== HERO SECTION ===== -->
-    <section class="hero" id="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-badges-wrapper">
-                    <div class="hero-badge">
-                        <span class="badge-dot"></span>
-                        <span>Available for opportunities</span>
+    <main>
+        <!-- ===== HERO ===== -->
+        <section class="hero" id="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badges">
+                        <span class="badge"><i class="dot"></i> Available for opportunities</span>
+                        <span class="badge badge--clock"><i class="dot dot--purple"></i> Saigon <span
+                                id="heroClock">--:--</span></span>
                     </div>
-                    <div class="hero-badge clock-badge">
-                        <span class="badge-dot pulse-cyan"></span>
-                        <span id="hero-clock">23:59</span>
-                    </div>
-                </div>
-                <h1 class="hero-name">
-                    <span class="greeting">Hey, I'm</span>
-                    <span class="name-highlight">Bao Giang</span>
-                </h1>
-                <div class="hero-title">
-                    <span class="title-prefix">&lt;</span>
-                    <span class="typing-text" id="typingText"></span>
-                    <span class="cursor">|</span>
-                    <span class="title-suffix">/&gt;</span>
-                </div>
-                <p class="hero-tagline">" No Pain No Gain "</p>
-                <div class="hero-socials">
-                    <a href="https://www.facebook.com/gain.baor" target="_blank" rel="noopener" class="social-link"
-                        aria-label="Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://www.instagram.com/it.young_/" target="_blank" rel="noopener" class="social-link"
-                        aria-label="Instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@it_young_?_r=1&_t=ZS-96exAtHUV9U" target="_blank" rel="noopener"
-                        class="social-link" aria-label="TikTok">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                    <a href="https://locket.cam/itz_young" target="_blank" rel="noopener" class="social-link"
-                        aria-label="Locket">
-                        <i class="fas fa-camera"></i>
-                    </a>
-                </div>
-                <a href="#contact" class="hero-cta">
-                    <span>Get in Touch</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-            <div class="hero-avatar-wrapper">
-                <div class="avatar-glow"></div>
-                <div class="avatar-ring"></div>
-                <img src="assets/avatar.png" alt="Bao Giang" class="hero-avatar">
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <div class="mouse">
-                <div class="wheel"></div>
-            </div>
-            <span>Scroll Down</span>
-        </div>
-    </section>
 
-    <!-- ===== MUSIC SECTION ===== -->
-    <section class="section music" id="music">
-        <div class="section-container">
-            <div class="section-header" data-reveal>
-                <span class="section-tag">// what i listen to</span>
-                <h2 class="section-title">My <span class="gradient-text">Music</span></h2>
-            </div>
-            <div class="music-wrapper glass-card" data-reveal>
-                <div class="music-visual">
-                    <div class="equalizer">
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                    </div>
-                    <p class="music-label">Currently Vibing To</p>
-                </div>
-                <!-- ===== SPOTIFY 3D CAROUSEL ===== -->
-                <div class="swiper music-swiper">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/5xVCfx47vCXuLdpfbepqEo?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/0IJjyCURQo8DOmtlnRtmiA?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1Qd4wSptT65JbVVT0ro9V2?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/5sGQvC7sIYbYjD1WSLS0bE?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/4oHNffwl7J3lMBNjvcYue2?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/6fHXfm4EVM3pEiMdQs9Vjm?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/0o0ppsUl9WXqULqdLSDdBs?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/6gIiSOpYqEj1CgWyYq9Ew2?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/472MFeCBXLVKmI0zGIrXOq?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3oqUj5BFiYm84cco3hFmK6?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="spotify-embed">
-                                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1nmu6jyohk4jRmDKe9Cuye?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Add Navigation -->
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                    <!-- Add Pagination -->
-                    <div class="swiper-pagination"></div>
-                </div>
-                <!-- ===== END SPOTIFY ===== -->
-            </div>
-        </div>
-    </section>
+                    <h1 class="hero-name">
+                        <span class="hero-greeting">Hey, I'm</span>
+                        <span class="grad-text">Bao Giang</span>
+                    </h1>
 
-    <!-- ===== ABOUT SECTION ===== -->
-    <section class="section about" id="about">
-        <div class="section-container">
-            <div class="section-header" data-reveal>
-                <span class="section-tag">// who am i</span>
-                <h2 class="section-title">About <span class="gradient-text">Me</span></h2>
-            </div>
-            <div class="about-grid">
-                <div class="about-card glass-card" data-reveal>
-                    <div class="about-icon">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h3>Student</h3>
-                    <p>Currently studying Information Technology at <strong>Van Lang University</strong>, passionate
-                        about exploring the world of tech and building cool things with code.</p>
-                </div>
-                <div class="about-card glass-card" data-reveal>
-                    <div class="about-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h3>Passions</h3>
-                    <p>When I'm not coding, you'll find me playing <strong>billiards</strong>, riding my
-                        <strong>motorcycle</strong> through the city, or creating content for social media.
+                    <p class="hero-role">
+                        <span class="role-bracket">&lt;</span>
+                        <span class="role-text" id="typingText"></span>
+                        <span class="role-caret" aria-hidden="true"></span>
+                        <span class="role-bracket">/&gt;</span>
                     </p>
-                </div>
-                <div class="about-card glass-card" data-reveal>
-                    <div class="about-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <h3>Based in</h3>
-                    <p><strong>Ho Chi Minh City, Vietnam</strong> &mdash; the vibrant city that never sleeps. Living
-                        life to the fullest, one day at a time.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- ===== HOBBIES SECTION ===== -->
-    <!--
-    <section class="section hobbies" id="hobbies">
-        <div class="section-container">
-            <div class="section-header" data-reveal>
-                <span class="section-tag">// what i love</span>
-                <h2 class="section-title">My <span class="gradient-text">Hobbies</span></h2>
-            </div>
-            <div class="hobbies-grid">
-                <div class="hobby-card glass-card" data-reveal>
-                    <div class="hobby-icon-wrapper">
-                        <div class="hobby-icon"><i class="fas fa-8-ball"
-                                style="font-size:2.5rem;color:var(--accent-cyan)"></i></div>
-                    </div>
-                    <h3>Billiards</h3>
-                    <p>Nothing beats the focus and precision of a perfect shot. Billiards is where strategy meets skill
-                        &mdash; my favorite way to unwind and challenge myself.</p>
-                    <div class="hobby-tag">Strategy &amp; Focus</div>
-                </div>
-                <div class="hobby-card glass-card" data-reveal>
-                    <div class="hobby-icon-wrapper">
-                        <div class="hobby-icon"><i class="fas fa-motorcycle"
-                                style="font-size:2.5rem;color:var(--accent-purple)"></i></div>
-                    </div>
-                    <h3>Motorcycles</h3>
-                    <p>The thrill of the open road, the sound of the engine &mdash; riding is freedom. Exploring new
-                        routes and enjoying every mile on my dream bike.</p>
-                    <div class="hobby-tag">Adventure &amp; Freedom</div>
-                </div>
-                <div class="hobby-card glass-card" data-reveal>
-                    <div class="hobby-icon-wrapper">
-                        <div class="hobby-icon"><i class="fas fa-video"
-                                style="font-size:2.5rem;color:var(--accent-pink)"></i></div>
-                    </div>
-                    <h3>Content Creation</h3>
-                    <p>Capturing moments, creating stories. From TikTok to Instagram, I love sharing my daily life and
-                        inspiring others through visual content.</p>
-                    <div class="hobby-tag">Creative &amp; Social</div>
-                </div>
-            </div>
-        </div>
-    </section>
-    -->
+                    <p class="hero-tagline">&ldquo; No Pain No Gain &rdquo;</p>
 
-    <!-- ===== TIMELINE SECTION ===== -->
-    <!--
-    <section class="section timeline-section" id="timeline">
-        <div class="section-container">
-            <div class="section-header" data-reveal>
-                <span class="section-tag">// my journey</span>
-                <h2 class="section-title">Life <span class="gradient-text">Timeline</span></h2>
-            </div>
-            <div class="timeline">
-                <div class="timeline-item" data-reveal>
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">April 2024</span>
-                        <h3><i class="fas fa-birthday-cake"></i> Dream Bike Birthday Gift</h3>
-                        <p>Received my dream motorcycle as a birthday gift &mdash; the beginning of a new adventure on
-                            two wheels.</p>
-                    </div>
-                </div>
-                <div class="timeline-item" data-reveal>
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">June 2024</span>
-                        <h3><i class="fas fa-graduation-cap"></i> High School Graduation</h3>
-                        <p>Successfully graduated from high school, closing one chapter and opening the door to new
-                            possibilities.</p>
-                    </div>
-                </div>
-                <div class="timeline-item" data-reveal>
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">September 2024</span>
-                        <h3><i class="fas fa-university"></i> Enrolled at Van Lang University</h3>
-                        <p>Started my journey in Information Technology at Van Lang University &mdash; ready to build
-                            the future with code.</p>
-                    </div>
-                </div>
-                <div class="timeline-item" data-reveal>
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">January 2025</span>
-                        <h3><i class="fas fa-check-circle"></i> Completed First Semester</h3>
-                        <p>Finished my first semester of university, adapting to college life and diving deeper into the
-                            world of IT.</p>
-                    </div>
-                </div>
-                <div class="timeline-item" data-reveal>
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">Mid 2025</span>
-                        <h3><i class="fas fa-mobile-alt"></i> Started Content Creation</h3>
-                        <p>Began creating content on social media, sharing my daily life, motorcycle rides, and tech
-                            experiences.</p>
-                    </div>
-                </div>
-                <div class="timeline-item" data-reveal>
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">Early 2026</span>
-                        <h3><i class="fas fa-film"></i> Vlogging Journey Begins</h3>
-                        <p>Took content creation to the next level &mdash; started vlogging and documenting my life as
-                            an IT student and motorcycle enthusiast.</p>
-                    </div>
-                </div>
-                <div class="timeline-item" data-reveal>
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">April 2026</span>
-                        <h3><i class="fas fa-camera"></i> Purchased DJI Action 4</h3>
-                        <p>Upgraded my gear with the DJI Action 4 &mdash; ready to capture every adventure in cinematic
-                            quality.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    -->
-
-    <!-- ===== GOALS SECTION ===== -->
-    <!--
-    <section class="section goals" id="goals">
-        <div class="section-container">
-            <div class="section-header" data-reveal>
-                <span class="section-tag">// where i'm heading</span>
-                <h2 class="section-title">Future <span class="gradient-text">Goals</span></h2>
-            </div>
-            <div class="goals-grid">
-                <div class="goal-card glass-card" data-reveal>
-                    <div class="goal-number">01</div>
-                    <div class="goal-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <h3>Graduate with Honors</h3>
-                    <p>Earn a degree with distinction from Van Lang University &mdash; the result of dedication and hard
-                        work.</p>
-                    <div class="goal-status">
-                        <span class="status-dot in-progress"></span>
-                        In Progress
-                    </div>
-                </div>
-                <div class="goal-card glass-card" data-reveal>
-                    <div class="goal-number">02</div>
-                    <div class="goal-icon"><i class="fas fa-video"></i></div>
-                    <h3>Become a Vlogger</h3>
-                    <p>Build a community through authentic storytelling &mdash; sharing my journey, adventures, and
-                        experiences with the world.</p>
-                    <div class="goal-status">
-                        <span class="status-dot in-progress"></span>
-                        In Progress
-                    </div>
-                </div>
-                <div class="goal-card glass-card" data-reveal>
-                    <div class="goal-number">03</div>
-                    <div class="goal-icon"><i class="fas fa-id-card"></i></div>
-                    <h3>Get a Driver's License</h3>
-                    <p>Obtain a car driving license &mdash; unlocking new roads and expanding my horizons beyond two
-                        wheels.</p>
-                    <div class="goal-status">
-                        <span class="status-dot upcoming"></span>
-                        Upcoming
-                    </div>
-                </div>
-                <div class="goal-card glass-card" data-reveal>
-                    <div class="goal-number">04</div>
-                    <div class="goal-icon"><i class="fas fa-car"></i></div>
-                    <h3>Own a Car</h3>
-                    <p>A symbol of achievement &mdash; owning my dream car through hard work and perseverance.</p>
-                    <div class="goal-status">
-                        <span class="status-dot upcoming"></span>
-                        Future Dream
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    -->
-
-    <!-- ===== GALLERY SECTION ===== -->
-    <section class="section gallery-section" id="gallery">
-        <div class="section-container">
-            <div class="section-header" data-reveal>
-                <span class="section-tag">// my visual library</span>
-                <h2 class="section-title">My <span class="gradient-text">Gallery</span></h2>
-            </div>
-
-            <div class="gallery-wrapper" data-reveal>
-                <!-- Frame 1: Billiards / Myself -->
-                <div class="gallery-frame glass-card" id="frame-billiards" onclick="expandGalleryFrame('billiards')">
-                    <div class="frame-cover-image">
-                        <img loading="lazy" src="assets/images/covers/yeah2.png" alt="Myself Cover">
-                    </div>
-                    <div class="frame-overlay-dark"></div>
-                    <div class="frame-content">
-                        <div class="frame-icon"><i class="fas fa-user-circle"></i></div>
-                        <h3>Myself</h3>
-                        <p>Driven by intense focus and absolute precision</p>
-                        <span class="frame-action">View Album <i class="fas fa-arrow-right"></i></span>
+                    <div class="hero-actions">
+                        <a href="#contact" class="btn btn-primary">
+                            <span>Get in Touch</span><i class="fas fa-arrow-right"></i>
+                        </a>
+                        <div class="socials">
+                            <a href="https://www.facebook.com/gain.baor" target="_blank" rel="noopener"
+                                class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/it.young_/" target="_blank" rel="noopener"
+                                class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.tiktok.com/@it_young_?_r=1&amp;_t=ZS-96exAtHUV9U" target="_blank"
+                                rel="noopener" class="social-link" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                            <a href="https://locket.cam/itz_young" target="_blank" rel="noopener" class="social-link"
+                                aria-label="Locket"><i class="fas fa-camera"></i></a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Frame 2: Motorcycles -->
-                <div class="gallery-frame glass-card" id="frame-motorcycles"
-                    onclick="expandGalleryFrame('motorcycles')">
-                    <div class="frame-cover-image">
-                        <img loading="lazy" src="assets/images/covers/IMG_4800.JPG" alt="Motorcycles Cover">
-                    </div>
-                    <div class="frame-overlay-dark"></div>
-                    <div class="frame-content">
-                        <div class="frame-icon"><i class="fas fa-motorcycle"></i></div>
-                        <h3>Motorcycles</h3>
-                        <p>Finding my freedom in the rhythm of the city streets</p>
-                        <span class="frame-action">View Album <i class="fas fa-arrow-right"></i></span>
-                    </div>
-                </div>
-
-                <!-- Frame 3: Life & Vlog / Daily -->
-                <div class="gallery-frame glass-card" id="frame-life" onclick="expandGalleryFrame('life')">
-                    <div class="frame-cover-image">
-                        <img loading="lazy" src="assets/images/covers/z7867581724712_7ad3960bcd308860b36161d9aa5d5942.jpg"
-                            alt="Daily Cover">
-                    </div>
-                    <div class="frame-overlay-dark"></div>
-                    <div class="frame-content">
-                        <div class="frame-icon"><i class="fas fa-camera"></i></div>
-                        <h3>Daily</h3>
-                        <p>Just an IT student capturing ordinary moments</p>
-                        <span class="frame-action">View Album <i class="fas fa-arrow-right"></i></span>
-                    </div>
+                <div class="hero-avatar-wrap">
+                    <div class="avatar-glow" aria-hidden="true"></div>
+                    <div class="avatar-ring" aria-hidden="true"></div>
+                    <div class="avatar-ring avatar-ring--inner" aria-hidden="true"></div>
+                    <img src="assets/avatar.png" alt="Portrait of Bao Giang" class="hero-avatar" width="360"
+                        height="360">
                 </div>
             </div>
 
-            <!-- Dynamic Photo Grid Container (Loads below when a frame is expanded) -->
-            <div class="photo-grid-container glass-card" id="photoGridContainer" style="display: none;">
-                <div class="grid-header">
-                    <h3 id="gridTitle">Album</h3>
-                    <button class="close-grid-btn" id="closeGridBtn" onclick="closeExpandedFrame()"
-                        aria-label="Close Album">
-                        <i class="fas fa-times"></i> Close
-                    </button>
-                </div>
-
-                <!-- Billiards Photos -->
-                <div class="photo-grid" id="grid-billiards" style="display: none;">
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/myself/z7867573107848_dcf3f29c4abe184f09f029ab12a3efd0.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/myself/z7867573107848_dcf3f29c4abe184f09f029ab12a3efd0.jpg"
-                            alt="Myself Slot 1" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/myself/z7867573444580_04097ab2a1c4508835f7a1bf8ea76477.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/myself/z7867573444580_04097ab2a1c4508835f7a1bf8ea76477.jpg"
-                            alt="Myself Slot 2" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/myself/z7867573602287_ff167f5e8c4794c99c10e7d627d78b5c.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/myself/z7867573602287_ff167f5e8c4794c99c10e7d627d78b5c.jpg"
-                            alt="Myself Slot 3" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/myself/z7867573719012_62a3322652b05f7a345d59b34a09568c.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/myself/z7867573719012_62a3322652b05f7a345d59b34a09568c.jpg"
-                            alt="Myself Slot 4" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/myself/z7867573806282_655adbbe6d1530f637fd2ca4f8667a3d.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/myself/z7867573806282_655adbbe6d1530f637fd2ca4f8667a3d.jpg"
-                            alt="Myself Slot 5" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                </div>
-
-                <!-- Motorcycles Photos -->
-                <div class="photo-grid" id="grid-motorcycles" style="display: none;">
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/motorcycles/z7867552172506_9c6e384f5cd648544b06229bf0e5b4db.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/motorcycles/z7867552172506_9c6e384f5cd648544b06229bf0e5b4db.jpg"
-                            alt="Motorcycles Slot 1" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/motorcycles/z7867552244991_ecc590532456411c3c9cf17ea10d964c.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/motorcycles/z7867552244991_ecc590532456411c3c9cf17ea10d964c.jpg"
-                            alt="Motorcycles Slot 2" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/motorcycles/z7867552327524_782dd64e3b53bc6c7897175d8f0ee8ec.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/motorcycles/z7867552327524_782dd64e3b53bc6c7897175d8f0ee8ec.jpg"
-                            alt="Motorcycles Slot 3" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/motorcycles/z7867552394139_4e9d186880fdba759b9682afef93d48d.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/motorcycles/z7867552394139_4e9d186880fdba759b9682afef93d48d.jpg"
-                            alt="Motorcycles Slot 4" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/motorcycles/A65093D4-FECD-4512-BFAF-66B3026AA4CD.png', '')">
-                        <img loading="lazy" src="assets/images/inside/motorcycles/A65093D4-FECD-4512-BFAF-66B3026AA4CD.png"
-                            alt="Motorcycles Slot 5" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item" onclick="openLightbox(this, 'assets/images/inside/motorcycles/IMG_4768.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/motorcycles/IMG_4768.jpg" alt="Motorcycles Slot 6"
-                            onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item" onclick="openLightbox(this, 'assets/images/inside/motorcycles/IMG_4765.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/motorcycles/IMG_4765.jpg" alt="Motorcycles Slot 7"
-                            onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                </div>
-
-                <!-- Life & Vlog Photos -->
-                <div class="photo-grid" id="grid-life" style="display: none;">
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/daily/z7867581308309_a22d233f605620e2084b12fa083e5064.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/daily/z7867581308309_a22d233f605620e2084b12fa083e5064.jpg"
-                            alt="Life Slot 1" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/covers/z7867581724712_7ad3960bcd308860b36161d9aa5d5942.jpg', '')">
-                        <img loading="lazy" src="assets/images/covers/z7867581724712_7ad3960bcd308860b36161d9aa5d5942.jpg"
-                            alt="Life Slot 2" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/daily/z7867582189241_36e308db949ac7c4e1975ccee4eb719e.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/daily/z7867582189241_36e308db949ac7c4e1975ccee4eb719e.jpg"
-                            alt="Life Slot 3" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/daily/z7867582548615_99a5a2c4e851e04fa3f0bc78a559af8b.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/daily/z7867582548615_99a5a2c4e851e04fa3f0bc78a559af8b.jpg"
-                            alt="Life Slot 4" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/daily/z7867582694625_021c108d80db9e0b8514aa86a7f926aa.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/daily/z7867582694625_021c108d80db9e0b8514aa86a7f926aa.jpg"
-                            alt="Life Slot 5" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                    <div class="gallery-item"
-                        onclick="openLightbox(this, 'assets/images/inside/daily/z7867582846706_1852ddeb6554ff6c38b5ee2584230db4.jpg', '')">
-                        <img loading="lazy" src="assets/images/inside/daily/z7867582846706_1852ddeb6554ff6c38b5ee2584230db4.jpg"
-                            alt="Life Slot 6" onerror="handleImageError(this, '')">
-                        <div class="item-overlay"><i class="fas fa-search-plus"></i></div>
-                    </div>
-                </div>
+            <div class="scroll-hint" aria-hidden="true">
+                <div class="mouse"><i></i></div>
+                <span>Scroll</span>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ===== PHOTO LIGHTBOX OVERLAY ===== -->
-    <div class="lightbox" id="photoLightbox" onclick="closeLightbox(event)">
-        <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close Lightbox">
-            <i class="fas fa-times"></i>
-        </button>
-        <button class="lightbox-btn prev-btn" id="lightboxPrev" aria-label="Previous Image">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <button class="lightbox-btn next-btn" id="lightboxNext" aria-label="Next Image">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-        <div class="lightbox-content">
-            <img loading="lazy" id="lightboxImg" src="" alt="Lightbox Preview">
-            <p id="lightboxCaption" class="lightbox-caption">Mô tả ảnh</p>
-        </div>
-    </div>
+        <!-- ===== MUSIC ===== -->
+        <section class="section" id="music">
+            <div class="container">
+                <header class="section-head" data-reveal>
+                    <span class="section-tag">what i listen to</span>
+                    <h2 class="section-title">My <span class="grad-text">Music</span></h2>
+                </header>
 
-    <!-- ===== CONTACT SECTION ===== -->
-    <section class="section contact" id="contact">
-        <div class="section-container">
-            <div class="section-header" data-reveal>
-                <span class="section-tag">// let's connect</span>
-                <h2 class="section-title">Get in <span class="gradient-text">Touch</span></h2>
-            </div>
-            <div class="contact-wrapper" data-reveal>
-                <div class="contact-info glass-card">
-                    <h3>Let's talk about everything!</h3>
-                    <p>Don't hesitate to reach out. Whether it's a project, collaboration, or just a friendly hello
-                        &mdash; I'd love to hear from you.</p>
-                    <div class="contact-details">
-                        <a href="mailto:giangbao041@gmail.com" class="contact-item">
-                            <div class="contact-item-icon">
-                                <i class="fas fa-envelope"></i>
+                <div class="card music-panel" data-reveal>
+                    <div class="music-visual">
+                        <div class="equalizer" aria-hidden="true">
+                            <span class="bar"></span><span class="bar"></span><span class="bar"></span><span
+                                class="bar"></span><span class="bar"></span><span class="bar"></span><span
+                                class="bar"></span><span class="bar"></span>
+                        </div>
+                        <p class="music-label">Currently Vibing To</p>
+                    </div>
+
+                    <div class="swiper music-swiper">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 1" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/5xVCfx47vCXuLdpfbepqEo?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
                             </div>
-                            <div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 2" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/0IJjyCURQo8DOmtlnRtmiA?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 3" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/1Qd4wSptT65JbVVT0ro9V2?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 4" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/5sGQvC7sIYbYjD1WSLS0bE?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 5" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/4oHNffwl7J3lMBNjvcYue2?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 6" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/6fHXfm4EVM3pEiMdQs9Vjm?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 7" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/0o0ppsUl9WXqULqdLSDdBs?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 8" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/6gIiSOpYqEj1CgWyYq9Ew2?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 9" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/472MFeCBXLVKmI0zGIrXOq?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 10" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/3oqUj5BFiYm84cco3hFmK6?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="spotify-embed">
+                                    <iframe title="Spotify track 11" scrolling="no"
+                                        src="https://open.spotify.com/embed/track/1nmu6jyohk4jRmDKe9Cuye?utm_source=generator"
+                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ABOUT ===== -->
+        <section class="section" id="about">
+            <div class="container">
+                <header class="section-head" data-reveal>
+                    <span class="section-tag">who am i</span>
+                    <h2 class="section-title">About <span class="grad-text">Me</span></h2>
+                </header>
+
+                <div class="about-grid">
+                    <article class="card card--hover card--accent about-card" data-reveal style="--d:0">
+                        <div class="icon-tile"><i class="fas fa-user-graduate"></i></div>
+                        <h3>Student</h3>
+                        <p>Currently studying Information Technology at <strong>Van Lang University</strong>, passionate
+                            about exploring the world of tech and building cool things with code.</p>
+                    </article>
+
+                    <article class="card card--hover card--accent about-card" data-reveal style="--d:1">
+                        <div class="icon-tile icon-tile--purple"><i class="fas fa-heart"></i></div>
+                        <h3>Passions</h3>
+                        <p>When I'm not coding, you'll find me playing <strong>billiards</strong>, riding my
+                            <strong>motorcycle</strong> through the city, or creating content for social media.</p>
+                    </article>
+
+                    <article class="card card--hover card--accent about-card" data-reveal style="--d:2">
+                        <div class="icon-tile"><i class="fas fa-map-marker-alt"></i></div>
+                        <h3>Based in</h3>
+                        <p><strong>Ho Chi Minh City, Vietnam</strong> &mdash; the vibrant city that never sleeps. Living
+                            life to the fullest, one day at a time.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <!-- ===== GALLERY ===== -->
+        <section class="section" id="gallery">
+            <div class="container">
+                <header class="section-head" data-reveal>
+                    <span class="section-tag">my visual library</span>
+                    <h2 class="section-title">My <span class="grad-text">Gallery</span></h2>
+                    <p class="section-sub">Three albums, one story. Tap a cover to open it.</p>
+                </header>
+
+                <div class="gallery-frames" id="galleryFrames" data-reveal></div>
+
+                <div class="card album" id="album" aria-live="polite">
+                    <div class="album-head">
+                        <h3 id="albumTitle">Album</h3>
+                        <button class="album-close" id="albumClose"><i class="fas fa-times"></i> Close</button>
+                    </div>
+                    <div class="photo-grid" id="photoGrid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT ===== -->
+        <section class="section" id="contact">
+            <div class="container">
+                <header class="section-head" data-reveal>
+                    <span class="section-tag">let's connect</span>
+                    <h2 class="section-title">Get in <span class="grad-text">Touch</span></h2>
+                </header>
+
+                <div class="card contact-panel" data-reveal>
+                    <div>
+                        <h3>Let's talk about everything!</h3>
+                        <p class="contact-intro">Don't hesitate to reach out. Whether it's a project, collaboration, or
+                            just a friendly hello &mdash; I'd love to hear from you.</p>
+
+                        <div class="contact-socials">
+                            <a href="https://www.facebook.com/gain.baor" target="_blank" rel="noopener"
+                                class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/it.young_/" target="_blank" rel="noopener"
+                                class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.tiktok.com/@it_young_?_r=1&amp;_t=ZS-96exAtHUV9U" target="_blank"
+                                rel="noopener" class="social-link" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                            <a href="https://locket.cam/itz_young" target="_blank" rel="noopener" class="social-link"
+                                aria-label="Locket"><i class="fas fa-camera"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="contact-list">
+                        <a href="mailto:giangbao041@gmail.com" class="contact-item">
+                            <span class="icon-tile"><i class="fas fa-envelope"></i></span>
+                            <span>
                                 <span class="contact-label">Email</span>
                                 <span class="contact-value">giangbao041@gmail.com</span>
-                            </div>
+                            </span>
                         </a>
                         <a href="tel:0364888253" class="contact-item">
-                            <div class="contact-item-icon">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <div>
+                            <span class="icon-tile icon-tile--purple"><i class="fas fa-phone"></i></span>
+                            <span>
                                 <span class="contact-label">Phone</span>
                                 <span class="contact-value">0364 888 253</span>
-                            </div>
+                            </span>
                         </a>
                         <div class="contact-item">
-                            <div class="contact-item-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div>
+                            <span class="icon-tile"><i class="fas fa-map-marker-alt"></i></span>
+                            <span>
                                 <span class="contact-label">Location</span>
                                 <span class="contact-value">Ho Chi Minh City, Vietnam</span>
-                            </div>
+                            </span>
                         </div>
-                    </div>
-                    <div class="contact-socials">
-                        <a href="https://www.facebook.com/gain.baor" target="_blank" rel="noopener"
-                            class="contact-social-link" aria-label="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/it.young_/" target="_blank" rel="noopener"
-                            class="contact-social-link" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://www.tiktok.com/@it_young_?_r=1&_t=ZS-96exAtHUV9U" target="_blank"
-                            rel="noopener" class="contact-social-link" aria-label="TikTok">
-                            <i class="fab fa-tiktok"></i>
-                        </a>
-                        <a href="https://locket.cam/itz_young" target="_blank" rel="noopener"
-                            class="contact-social-link" aria-label="Locket">
-                            <i class="fas fa-camera"></i>
-                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- ===== FOOTER ===== -->
     <footer class="footer">
-        <div class="footer-container">
+        <div class="container footer-inner">
             <p>&copy; 2026 Bao Giang. All rights reserved.</p>
-            <p class="footer-tagline">Built with <span class="heart">&hearts;</span> and lots of coffee.</p>
+            <p>Built with <span class="heart">&hearts;</span> and lots of coffee.</p>
         </div>
     </footer>
 
-    <!-- Swiper JS -->
+    <!-- ===== LIGHTBOX ===== -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+        <button class="lb-btn lb-close" id="lbClose" aria-label="Close"><i class="fas fa-times"></i></button>
+        <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous photo"><i
+                class="fas fa-chevron-left"></i></button>
+        <button class="lb-btn lb-next" id="lbNext" aria-label="Next photo"><i
+                class="fas fa-chevron-right"></i></button>
+        <div class="lightbox-content">
+            <img id="lbImg" src="" alt="">
+            <p class="lightbox-caption" id="lbCaption"></p>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="script.js?v=3.2"></script>
+    <script src="script.js?v=4.4"></script>
 </body>
 
 </html>
