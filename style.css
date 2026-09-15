@@ -560,10 +560,13 @@ ul {
     margin-bottom: 14px;
 }
 
+/* a small gradient dot, the same mark as the hero badges — no dash-like rule */
 .section-tag::before {
     content: "";
-    width: 22px;
-    height: 1px;
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
     background: var(--grad);
 }
 
@@ -813,6 +816,12 @@ ul {
     padding-left: 16px;
     border-left: 2px solid var(--teal);
     margin-bottom: 32px;
+}
+
+/* the quote marks carry the accent colour, so the line can go on small screens */
+.hero-tagline .q {
+    color: var(--teal);
+    font-style: normal;
 }
 
 .hero-actions {
@@ -1793,11 +1802,12 @@ a.contact-item:hover {
         justify-content: center;
     }
 
+    /* centred, the side rule has nowhere to sit — and turned horizontal it read
+       as a long dash above the line, so on narrow screens the teal quote marks
+       are the only accent */
     .hero-tagline {
         border-left: 0;
-        border-top: 2px solid var(--teal);
-        padding: 14px 0 0;
-        display: inline-block;
+        padding: 0;
     }
 
     .section-head {
