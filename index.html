@@ -15,16 +15,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
+
+    <link rel="preconnect" href="https://open.spotify.com">
+    <link rel="dns-prefetch" href="https://embed-cdn.spotifycdn.com">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Swiper -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css">
 
-    <link rel="stylesheet" href="style.css?v=4.6">
+    <link rel="stylesheet" href="style.css?v=5.1">
 
     <!-- restore saved theme before first paint to avoid a flash -->
     <script>
@@ -122,8 +125,8 @@
                     <div class="avatar-glow" aria-hidden="true"></div>
                     <div class="avatar-ring" aria-hidden="true"></div>
                     <div class="avatar-ring avatar-ring--inner" aria-hidden="true"></div>
-                    <img src="assets/avatar.png" alt="Portrait of Bao Giang" class="hero-avatar" width="360"
-                        height="360">
+                    <img src="assets/opt/avatar.webp" alt="Portrait of Bao Giang" class="hero-avatar" width="360"
+                        height="360" fetchpriority="high" decoding="async">
                 </div>
             </div>
 
@@ -154,103 +157,37 @@
                     <div class="swiper music-swiper">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 1" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/5xVCfx47vCXuLdpfbepqEo?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/5xVCfx47vCXuLdpfbepqEo?utm_source=generator" data-title="Spotify track 1"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 2" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/0IJjyCURQo8DOmtlnRtmiA?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/0IJjyCURQo8DOmtlnRtmiA?utm_source=generator" data-title="Spotify track 2"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 3" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/1Qd4wSptT65JbVVT0ro9V2?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/1Qd4wSptT65JbVVT0ro9V2?utm_source=generator" data-title="Spotify track 3"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 4" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/5sGQvC7sIYbYjD1WSLS0bE?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/5sGQvC7sIYbYjD1WSLS0bE?utm_source=generator" data-title="Spotify track 4"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 5" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/4oHNffwl7J3lMBNjvcYue2?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/4oHNffwl7J3lMBNjvcYue2?utm_source=generator" data-title="Spotify track 5"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 6" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/6fHXfm4EVM3pEiMdQs9Vjm?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/6fHXfm4EVM3pEiMdQs9Vjm?utm_source=generator" data-title="Spotify track 6"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 7" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/0o0ppsUl9WXqULqdLSDdBs?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/0o0ppsUl9WXqULqdLSDdBs?utm_source=generator" data-title="Spotify track 7"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 8" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/6gIiSOpYqEj1CgWyYq9Ew2?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/6gIiSOpYqEj1CgWyYq9Ew2?utm_source=generator" data-title="Spotify track 8"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 9" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/472MFeCBXLVKmI0zGIrXOq?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/472MFeCBXLVKmI0zGIrXOq?utm_source=generator" data-title="Spotify track 9"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 10" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/3oqUj5BFiYm84cco3hFmK6?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/3oqUj5BFiYm84cco3hFmK6?utm_source=generator" data-title="Spotify track 10"></div>
                             </div>
                             <div class="swiper-slide">
-                                <div class="spotify-embed">
-                                    <iframe title="Spotify track 11" scrolling="no"
-                                        src="https://open.spotify.com/embed/track/1nmu6jyohk4jRmDKe9Cuye?utm_source=generator"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
-                                </div>
+                                <div class="spotify-embed" data-src="https://open.spotify.com/embed/track/1nmu6jyohk4jRmDKe9Cuye?utm_source=generator" data-title="Spotify track 11"></div>
                             </div>
                         </div>
 
@@ -389,8 +326,8 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="script.js?v=4.6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js"></script>
+    <script src="script.js?v=5.1"></script>
 </body>
 
 </html>

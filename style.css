@@ -184,14 +184,23 @@ ul {
     opacity: .6;
 }
 
-/* Each orb runs a long looping drift on `transform` while `translate` — a
-   separate property, so the two compose instead of fighting — carries the
-   pointer and scroll parallax that script.js feeds in through --mx/--my/--sy.
-   Different depth multipliers per orb are what sell the parallax. */
-/* Anchored at the top-left corner and pulled back by half its own size, so
-   the orb's CENTRE sits wherever the keyframes translate it to. That makes
-   the paths below readable: every pair is just a point on the screen in
-   vw/vh, and each orb roams the full viewport rather than jiggling in place. */
+/* Ambient orbs.
+   - Position: each is anchored at the top-left corner and pulled back by half
+     its own size, so its CENTRE sits wherever the keyframes put it. The roam
+     paths below are then plain vw/vh points that sweep the whole viewport.
+   - Parallax: the loop runs on `transform`; pointer and scroll parallax ride
+     on `translate`, a separate property, so the two compose rather than one
+     overwriting the other. script.js feeds --mx/--my/--sy.
+   - No filter: blur(). Chrome re-evaluates a CSS filter on a composited layer
+     every frame it draws, so four 90px blurs over layers that never stop
+     moving meant four large blur passes per frame, forever. The blurred look
+     is baked into the gradient instead, leaving a plain texture the compositor
+     only has to move. The stops and sizes are not eyeballed: they are the old
+     cone gradients run through a sigma-90 Gaussian (Pillow's GaussianBlur,
+     which takes sigma exactly as CSS blur() does) and sampled. One shared
+     curve fits all four orbs to within 1.5%; each orb's --size is where its
+     blurred edge reached zero, and its --o is the old opacity times the
+     strength the blur left at the centre, so the brightness matches too. */
 .orb {
     position: absolute;
     top: 0;
@@ -200,10 +209,20 @@ ul {
     height: var(--size);
     margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
     border-radius: 50%;
-    filter: blur(90px);
+    background: radial-gradient(closest-side,
+            var(--c) 0%,
+            color-mix(in srgb, var(--c) 92.2%, transparent) 15%,
+            color-mix(in srgb, var(--c) 72.1%, transparent) 30%,
+            color-mix(in srgb, var(--c) 52%, transparent) 42%,
+            color-mix(in srgb, var(--c) 33.2%, transparent) 54%,
+            color-mix(in srgb, var(--c) 18.4%, transparent) 66%,
+            color-mix(in srgb, var(--c) 8.2%, transparent) 78%,
+            color-mix(in srgb, var(--c) 3.3%, transparent) 90%,
+            transparent 100%);
     opacity: var(--o);
-    will-change: transform, translate;
+    will-change: transform;
     transition: translate 1.1s var(--ease-out);
+    pointer-events: none;
 }
 
 [data-theme="light"] .bg-grid {
@@ -211,33 +230,33 @@ ul {
 }
 
 .orb-1 {
-    --size: 520px;
-    --o: calc(.5 * var(--orb-strength));
-    background: radial-gradient(circle, var(--teal), transparent 68%);
+    --size: 784px;
+    --c: var(--teal);
+    --o: calc(.273 * var(--orb-strength));
     translate: calc(var(--mx) * 38px) calc(var(--my) * 30px + var(--sy) * -90px);
     animation: roam-1 34s ease-in-out infinite;
 }
 
 .orb-2 {
-    --size: 470px;
-    --o: calc(.46 * var(--orb-strength));
-    background: radial-gradient(circle, var(--purple), transparent 68%);
+    --size: 738px;
+    --c: var(--purple);
+    --o: calc(.229 * var(--orb-strength));
     translate: calc(var(--mx) * -56px) calc(var(--my) * -42px + var(--sy) * 130px);
     animation: roam-2 43s ease-in-out infinite;
 }
 
 .orb-3 {
-    --size: 420px;
-    --o: calc(.32 * var(--orb-strength));
-    background: radial-gradient(circle, var(--teal), transparent 70%);
+    --size: 702px;
+    --c: var(--teal);
+    --o: calc(.147 * var(--orb-strength));
     translate: calc(var(--mx) * 26px) calc(var(--my) * 20px + var(--sy) * -160px);
     animation: roam-3 38s ease-in-out infinite;
 }
 
 .orb-4 {
-    --size: 380px;
-    --o: calc(.3 * var(--orb-strength));
-    background: radial-gradient(circle, var(--purple), transparent 70%);
+    --size: 662px;
+    --c: var(--purple);
+    --o: calc(.122 * var(--orb-strength));
     translate: calc(var(--mx) * -80px) calc(var(--my) * 62px + var(--sy) * 70px);
     animation: roam-4 51s ease-in-out infinite;
 }
@@ -690,11 +709,24 @@ ul {
 }
 
 .dot {
+    position: relative;
+    flex: none;
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: var(--teal);
     color: var(--teal);
+}
+
+/* The pulse is a copy of the dot scaled out and faded — transform and opacity
+   only, so it runs on the compositor. Animating box-shadow, as this used to,
+   repaints the badge on every frame. */
+.dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: currentColor;
     animation: ping 2.4s var(--ease) infinite;
 }
 
@@ -705,15 +737,14 @@ ul {
 
 @keyframes ping {
     0% {
-        box-shadow: 0 0 0 0 currentColor;
+        transform: scale(1);
+        opacity: .7;
     }
 
-    70% {
-        box-shadow: 0 0 0 7px transparent;
-    }
-
+    70%,
     100% {
-        box-shadow: 0 0 0 0 transparent;
+        transform: scale(3);
+        opacity: 0;
     }
 }
 
@@ -827,12 +858,31 @@ ul {
     place-items: center;
 }
 
+/* Same trick as the ambient orbs: the soft edge is a radial mask baked into
+   the layer instead of filter: blur(46px), which Chrome would re-run on every
+   frame of the pulse. The stops trace what that blur did to the old disc
+   (radius ~151px, sigma 46px): 50% strength right at the disc's edge (the 58%
+   stop), 16% one sigma out, ~2% two sigma out — then scaled by 0.83, because
+   the teal-to-purple gradient stretched over the bigger box comes out brighter
+   at the ring, and measured side by side that is what brings it level. The box
+   is grown to -22% so the tail has room to reach zero. */
 .avatar-glow {
+    --glow-mask: radial-gradient(closest-side,
+            rgba(0, 0, 0, 0.830) 0%,
+            rgba(0, 0, 0, 0.697) 40%,
+            rgba(0, 0, 0, 0.573) 49%,
+            rgba(0, 0, 0, 0.415) 58%,
+            rgba(0, 0, 0, 0.257) 67%,
+            rgba(0, 0, 0, 0.133) 76%,
+            rgba(0, 0, 0, 0.056) 85%,
+            rgba(0, 0, 0, 0.019) 94%,
+            transparent 100%);
     position: absolute;
-    inset: 8%;
+    inset: -22%;
     border-radius: 50%;
     background: var(--grad);
-    filter: blur(46px);
+    -webkit-mask-image: var(--glow-mask);
+    mask-image: var(--glow-mask);
     opacity: .34;
     animation: pulse-glow 7s var(--ease) infinite;
 }
@@ -958,50 +1008,49 @@ ul {
     margin-bottom: 16px;
 }
 
+/* Bars are a fixed 35px and scale down from their foot. The old keyframes
+   animated `height`, which re-runs layout for the whole panel on every frame
+   while the section is on screen; scaleY is compositor-only and looks the
+   same. The per-bar heights that used to live on :nth-child were always
+   overridden by the animation, so only the staggered delays remain. */
 .equalizer .bar {
     width: 4px;
+    height: 35px;
     border-radius: 2px;
     background: var(--grad);
+    transform-origin: 50% 100%;
     animation: equalize 1.2s ease-in-out infinite;
 }
 
 .equalizer .bar:nth-child(1) {
-    height: 10px;
     animation-delay: 0s;
 }
 
 .equalizer .bar:nth-child(2) {
-    height: 20px;
     animation-delay: .1s;
 }
 
 .equalizer .bar:nth-child(3) {
-    height: 30px;
     animation-delay: .2s;
 }
 
 .equalizer .bar:nth-child(4) {
-    height: 15px;
     animation-delay: .3s;
 }
 
 .equalizer .bar:nth-child(5) {
-    height: 35px;
     animation-delay: .15s;
 }
 
 .equalizer .bar:nth-child(6) {
-    height: 20px;
     animation-delay: .25s;
 }
 
 .equalizer .bar:nth-child(7) {
-    height: 25px;
     animation-delay: .05s;
 }
 
 .equalizer .bar:nth-child(8) {
-    height: 12px;
     animation-delay: .35s;
 }
 
@@ -1009,11 +1058,12 @@ ul {
 
     0%,
     100% {
-        height: 10px;
+        transform: scaleY(.286);
+        /* 10px of 35 */
     }
 
     50% {
-        height: 35px;
+        transform: scaleY(1);
     }
 }
 
@@ -1041,8 +1091,8 @@ ul {
     width: 280px;
     height: 352px;
     transform-style: preserve-3d;
-    backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
     will-change: transform;
     contain: layout paint;
 }
@@ -1065,30 +1115,73 @@ ul {
     overflow: hidden;
     background: var(--surface-2);
     box-shadow: 0 0 0 1px var(--border), 0 15px 40px -8px rgba(0, 0, 0, .45);
-    transform: translateZ(0);
-    filter: blur(0) brightness(1);
-    transition: filter .3s ease-out;
-    will-change: filter;
-}
-
-.music-swiper .swiper-slide:not(.swiper-slide-active) .spotify-embed {
-    filter: blur(3px) brightness(.5);
 }
 
 [data-theme="light"] .spotify-embed {
     box-shadow: 0 0 0 1px var(--border), 0 15px 36px -10px rgba(16, 24, 40, .28);
 }
 
-[data-theme="light"] .music-swiper .swiper-slide:not(.swiper-slide-active) .spotify-embed {
-    filter: blur(3px) brightness(.86);
+/* Placeholder shown until the player has loaded — and for slides far enough
+   from the centre that script.js has not mounted a player at all. It is a
+   static glyph, so it costs nothing to keep on screen. */
+.spotify-embed::before {
+    content: "1bc";
+    font-family: "Font Awesome 6 Brands";
+    font-weight: 400;
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 2.6rem;
+    color: var(--text-faint);
+    opacity: .35;
 }
 
+/* The player fades in over the placeholder once its document has loaded, so
+   a freshly mounted slide never flashes an empty frame. */
 .spotify-embed iframe {
+    position: relative;
+    z-index: 1;
     display: block;
     width: 100%;
     height: 100%;
     border: 0;
-    transform: translateZ(0);
+    opacity: 0;
+    transition: opacity .45s ease-out;
+}
+
+.spotify-embed iframe.is-loaded {
+    opacity: 1;
+}
+
+/* Side cards: dimmed and blurred, as before, but split so it stays cheap.
+   The dimming is an overlay whose opacity fades — a compositor-only change,
+   which is what keeps the swipe smooth. The blur is applied without a
+   transition: transitioning a filter re-rasterises the iframe at every
+   intermediate radius, and that was the costliest part of each swipe. It is
+   also skipped on unmounted placeholders, where there is nothing to blur. */
+.spotify-embed::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    background: rgba(4, 7, 11, .5);
+    opacity: 0;
+    transition: opacity .3s ease-out;
+    pointer-events: none;
+}
+
+[data-theme="light"] .spotify-embed::after {
+    background: rgba(0, 0, 0, .14);
+}
+
+.music-swiper .swiper-slide:not(.swiper-slide-active) .spotify-embed::after {
+    opacity: 1;
+}
+
+.music-swiper .swiper-slide:not(.swiper-slide-active) .spotify-embed.is-mounted {
+    filter: blur(3px);
 }
 
 .music-swiper .swiper-button-next,
@@ -1611,6 +1704,16 @@ a.contact-item:hover {
 
 .footer .heart {
     color: #FF5D73;
+}
+
+/* ---------- 13b. OFF-SCREEN PAUSE ---------- */
+/* script.js tags a section with .is-offscreen while it is scrolled out of
+   view, and its decorative loops (avatar rings, glow, pulses, equalizer)
+   freeze until it comes back instead of ticking away where nobody sees. */
+.is-offscreen *,
+.is-offscreen *::before,
+.is-offscreen *::after {
+    animation-play-state: paused !important;
 }
 
 /* ---------- 14. REVEAL ---------- */

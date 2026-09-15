@@ -46,8 +46,16 @@
         }
 
         let w = 0, c = 0, deleting = false;
+        const hero = $('#hero');
 
         const tick = () => {
+            // Each keystroke is a text change: a layout plus a repaint of the
+            // hero. Once the hero is scrolled away (the off-screen observer
+            // below tags it), idle instead of repainting what nobody can see.
+            if (hero && hero.classList.contains('is-offscreen')) {
+                setTimeout(tick, 600);
+                return;
+            }
             const word = words[w];
             c += deleting ? -1 : 1;
             el.textContent = word.slice(0, c);
@@ -109,40 +117,60 @@
             burger.setAttribute('aria-expanded', 'false');
         };
 
+        const bg = $('.bg-layer');
         let current = null;
+        let scrolled = null;
+
+        // Layout is measured once and cached, then refreshed only when the page
+        // actually changes size. Reading offsetTop / scrollHeight inside the
+        // scroll handler forces a synchronous layout whenever anything is dirty
+        // — and with animations running, something nearly always is.
+        let tops = [];
+        let maxScroll = 0;
+        let viewH = window.innerHeight;
+
+        const measure = () => {
+            viewH = window.innerHeight;
+            maxScroll = document.documentElement.scrollHeight - viewH;
+            tops = sections.map(s => s.offsetTop);
+        };
 
         const onScroll = () => {
             const y = window.scrollY;
 
-            navbar.classList.toggle('is-scrolled', y > 12);
+            const isScrolled = y > 12;
+            if (isScrolled !== scrolled) {
+                scrolled = isScrolled;
+                navbar.classList.toggle('is-scrolled', isScrolled);
+            }
 
-            const max = document.documentElement.scrollHeight - window.innerHeight;
-            const ratio = max > 0 ? Math.min(y / max, 1) : 0;
+            const ratio = maxScroll > 0 ? Math.min(y / maxScroll, 1) : 0;
 
             if (progress) progress.style.transform = `scaleX(${ratio})`;
 
-            // the background orbs drift against the scroll through --sy
-            if (!reduceMotion) {
-                document.documentElement.style.setProperty('--sy', ratio.toFixed(4));
-            }
+            // The orbs drift against the scroll through --sy. It is set on the
+            // background layer, not :root — custom properties inherit, so a
+            // change on :root restyles every element on the page.
+            if (bg && !reduceMotion) bg.style.setProperty('--sy', ratio.toFixed(4));
 
             // scroll spy — the section whose top has passed the nav line
-            const line = y + window.innerHeight * 0.32;
-            let active = sections[0];
-            for (const s of sections) {
-                if (s.offsetTop <= line) active = s;
+            const line = y + viewH * 0.32;
+            let idx = 0;
+            for (let i = 0; i < tops.length; i++) {
+                if (tops[i] <= line) idx = i;
             }
             // pin the last section once we're at the very bottom
-            if (y + window.innerHeight >= document.documentElement.scrollHeight - 4) {
-                active = sections[sections.length - 1];
-            }
+            if (y >= maxScroll - 4) idx = sections.length - 1;
 
+            const active = sections[idx];
             if (active && active !== current) {
                 current = active;
                 links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + active.id));
                 movePill($('.nav-link.is-active'));
             }
         };
+
+        const remeasure = () => { measure(); onScroll(); };
 
         let ticking = false;
         window.addEventListener('scroll', () => {
@@ -153,8 +181,20 @@
 
         window.addEventListener('resize', () => {
             if (window.innerWidth > 1080) closeMenu();
+            remeasure();
             movePill($('.nav-link.is-active'));
         });
+
+        // the page grows when fonts, images or an opened album land
+        window.addEventListener('load', remeasure);
+        if ('ResizeObserver' in window) {
+            let pending = false;
+            new ResizeObserver(() => {
+                if (pending) return;
+                pending = true;
+                requestAnimationFrame(() => { pending = false; remeasure(); });
+            }).observe(document.body);
+        }
 
         burger.addEventListener('click', () => {
             const open = list.classList.toggle('is-open');
@@ -169,14 +209,17 @@
             if (!list.contains(e.target) && !burger.contains(e.target)) closeMenu();
         });
 
-        onScroll();
+        remeasure();
     })();
 
     /* ---------- 5. AMBIENT BACKGROUND PARALLAX ---------- */
     (function ambient() {
         if (reduceMotion) return;
 
-        const root = document.documentElement;
+        // written on the background layer rather than :root, so a pointer move
+        // restyles five elements instead of the whole document
+        const bg = $('.bg-layer');
+        if (!bg) return;
         // a coarse pointer means a touchscreen: there is nothing to follow
         if (!window.matchMedia('(pointer: fine)').matches) return;
 
@@ -184,8 +227,8 @@
 
         const apply = () => {
             queued = false;
-            root.style.setProperty('--mx', x.toFixed(4));
-            root.style.setProperty('--my', y.toFixed(4));
+            bg.style.setProperty('--mx', x.toFixed(4));
+            bg.style.setProperty('--my', y.toFixed(4));
         };
 
         window.addEventListener('pointermove', (e) => {
@@ -196,6 +239,24 @@
             queued = true;
             requestAnimationFrame(apply);
         }, { passive: true });
+    })();
+
+    /* ---------- 5b. PAUSE OFF-SCREEN ANIMATIONS ---------- */
+    // The hero and music sections loop decorative animations forever; tag them
+    // while they are out of view and style.css freezes those loops.
+    (function offscreen() {
+        if (!('IntersectionObserver' in window)) return;
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                entry.target.classList.toggle('is-offscreen', !entry.isIntersecting);
+            });
+        }, { rootMargin: '120px 0px' });
+
+        ['#hero', '#music'].forEach(sel => {
+            const el = $(sel);
+            if (el) io.observe(el);
+        });
     })();
 
     /* ---------- 6. SCROLL REVEAL ---------- */
@@ -252,6 +313,61 @@
             allowTouchMove: false
         });
 
+        /* Players are mounted lazily, and only near the centre card.
+           - Every Spotify embed is a complete web app. Eleven at once is a lot
+             of memory and CPU to spend on the three cards you can see.
+           - Swiper's loop mode (11.2) re-orders slides by moving their
+             elements with prepend()/append(), and moving an iframe makes the
+             browser reload it. Keeping the far slides empty makes those moves
+             free instead of rebooting a player on every arrow click.
+           MOUNT is how far either side of centre a player is created; KEEP is
+           how far it may drift before it is dropped. The gap between them
+           stops a card being torn down and rebuilt on a quick back-and-forth. */
+        const MOUNT = 2;
+        const KEEP = 3;
+        const total = $$('.spotify-embed', node).length;
+        let live = false;
+
+        const mount = (holder) => {
+            if (holder.classList.contains('is-mounted')) return;
+            const f = document.createElement('iframe');
+            f.title = holder.dataset.title || 'Spotify player';
+            f.width = '100%';
+            f.height = '352';
+            f.setAttribute('frameborder', '0');
+            f.setAttribute('scrolling', 'no');
+            f.setAttribute('allowfullscreen', '');
+            f.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+            f.addEventListener('load', () => f.classList.add('is-loaded'), { once: true });
+            f.src = holder.dataset.src;
+            holder.appendChild(f);
+            holder.classList.add('is-mounted');
+        };
+
+        const unmount = (holder) => {
+            if (!holder.classList.contains('is-mounted')) return;
+            holder.replaceChildren();
+            holder.classList.remove('is-mounted');
+        };
+
+        const sync = () => {
+            if (!live) return;
+            const centre = swiper.realIndex;
+            const near = [];
+
+            swiper.slides.forEach(slide => {
+                const holder = slide.querySelector('.spotify-embed');
+                if (!holder) return;
+                const gap = Math.abs(Number(slide.dataset.swiperSlideIndex) - centre);
+                const d = Math.min(gap, total - gap); // distance around the loop
+                if (d > KEEP) unmount(holder);
+                else if (d <= MOUNT) near.push([d, holder]);
+            });
+
+            // centre card first, so the one you are looking at is never last
+            near.sort((a, b) => a[0] - b[0]).forEach(([, holder]) => mount(holder));
+        };
+
         // one track at a time: pause every embed that is not the centred one
         const pauseInactive = () => {
             const active = node.querySelector('.swiper-slide-active iframe');
@@ -264,7 +380,36 @@
         };
 
         swiper.on('slideChange', pauseInactive);
-        swiper.on('slideChangeTransitionEnd', pauseInactive);
+        // Mount new neighbours only once the slide animation has finished, so
+        // booting a player never competes with the swipe for the frame budget.
+        swiper.on('slideChangeTransitionEnd', () => {
+            pauseInactive();
+            sync();
+        });
+
+        // Nothing is loaded until the section is close to the viewport AND the
+        // page itself has finished loading and gone idle. On a short screen the
+        // music section sits right under the fold, so "close" alone would boot
+        // the players while the hero is still painting its first frame.
+        const goLive = () => {
+            const start = () => { live = true; sync(); };
+            const idle = () => ('requestIdleCallback' in window)
+                ? requestIdleCallback(start, { timeout: 1500 })
+                : setTimeout(start, 200);
+            if (document.readyState === 'complete') idle();
+            else window.addEventListener('load', idle, { once: true });
+        };
+
+        if ('IntersectionObserver' in window) {
+            const io = new IntersectionObserver((entries) => {
+                if (!entries.some(e => e.isIntersecting)) return;
+                io.disconnect();
+                goLive();
+            }, { rootMargin: '400px 0px' });
+            io.observe(node);
+        } else {
+            goLive();
+        }
     })();
 
     /* ---------- 8. GALLERY + LIGHTBOX ---------- */
@@ -323,12 +468,24 @@
             }
         ];
 
+        /* Photos are listed by their original path; what is actually served is
+           a web-sized WebP copy made by optimize-images.py — a 12-megapixel
+           phone photo decoded into a 180px grid cell costs ~48 MB of memory and
+           a visible stall. If a copy is missing (a photo added without running
+           the script), the <img> quietly falls back to the original file. */
+        const sized = (src, size) => src
+            .replace(/^assets\/images\//, `assets/opt/${size}/`)
+            .replace(/\.(jpe?g|png)$/i, '.webp');
+
+        const fallback = (src) => `onerror="this.onerror=null;this.src='${src}'"`;
+
         /* build the three covers */
         // a div rather than a <button>: headings and paragraphs are not
         // allowed inside button content, so we wire up the keyboard by hand.
         framesHost.innerHTML = ALBUMS.map(a => `
             <div class="frame" role="button" tabindex="0" data-album="${a.id}" aria-expanded="false">
-                <img src="${a.cover}" alt="${a.title} album cover" loading="lazy">
+                <img src="${sized(a.cover, 'cover')}" ${fallback(a.cover)} alt="${a.title} album cover"
+                    loading="lazy" decoding="async">
                 <span class="frame-count">${a.photos.length} photos</span>
                 <div class="frame-body">
                     <span class="frame-icon"><i class="fas ${a.icon}"></i></span>
@@ -362,7 +519,8 @@
             albumTitle.textContent = data.title;
             photoGrid.innerHTML = photos.map((src, i) => `
                 <button class="photo" type="button" data-i="${i}" aria-label="Open photo ${i + 1}">
-                    <img src="${src}" alt="${data.title} photo ${i + 1}" loading="lazy">
+                    <img src="${sized(src, 'thumb')}" ${fallback(src)} alt="${data.title} photo ${i + 1}"
+                        loading="lazy" decoding="async">
                 </button>`).join('');
 
             album.classList.add('is-open');
@@ -395,12 +553,24 @@
         const lbImg = $('#lbImg');
         const lbCaption = $('#lbCaption');
 
+        const preload = (i) => {
+            const src = photos[(i + photos.length) % photos.length];
+            const img = new Image();
+            img.decoding = 'async';
+            img.src = sized(src, 'full');
+        };
+
         const show = (i) => {
             if (!photos.length) return;
             index = (i + photos.length) % photos.length;
-            lbImg.src = photos[index];
+            const original = photos[index];
+            lbImg.onerror = () => { lbImg.onerror = null; lbImg.src = original; };
+            lbImg.src = sized(original, 'full');
             lbImg.alt = `${albumTitle.textContent} photo ${index + 1}`;
             lbCaption.textContent = `${albumTitle.textContent} · ${index + 1} / ${photos.length}`;
+            // warm the neighbours so the arrow keys land on an already-decoded image
+            preload(index + 1);
+            preload(index - 1);
         };
 
         const openLb = (i) => {
