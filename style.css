@@ -1,36 +1,42 @@
 /* =========================================================
    BAO GIANG — PORTFOLIO
-   Design system: dark cinematic · teal → purple
+   Design system: warm dark · clay → amber
    ========================================================= */
 
 /* ---------- 1. TOKENS ---------- */
+/* Every surface is warm: red channel above green above blue, all the way down
+   the ramp. That is what carries the palette — the clay accent on its own over
+   a cold grey would just read as an orange highlight, not a warm room. */
 :root {
     /* surfaces */
-    --bg: #0B0F14;
-    --bg-soft: #0E141B;
-    --surface: #131A22;
-    --surface-2: #18212B;
-    --border: rgba(255, 255, 255, .08);
-    --border-strong: rgba(255, 255, 255, .16);
+    --bg: #171512;
+    --bg-soft: #1D1A16;
+    --surface: #221E19;
+    --surface-2: #2A251F;
+    --border: rgba(240, 235, 227, .09);
+    --border-strong: rgba(240, 235, 227, .18);
 
     /* type */
-    --text: #E6EDF3;
-    --text-dim: #9AA7B4;
-    --text-faint: #6B7885;
+    --text: #F0EBE3;
+    --text-dim: #B2A79A;
+    --text-faint: #7F7568;
 
-    /* accents */
-    --teal: #2DD4BF;
-    --purple: #8B5CF6;
-    --teal-soft: rgba(45, 212, 191, .14);
-    --purple-soft: rgba(139, 92, 246, .14);
-    --grad: linear-gradient(115deg, var(--teal) 0%, var(--purple) 100%);
-    /* text that sits on top of the accent gradient */
-    --on-accent: #06121A;
-    --accent-shadow: rgba(45, 212, 191, .7);
+    /* accents. The second is a near neighbour of the first, not a contrast
+       partner: the gradient should read as one warm light with a hot edge,
+       which is why this palette survives being stretched across a headline. */
+    --accent: #D9775A;
+    --accent-2: #E0A264;
+    --accent-soft: rgba(217, 119, 90, .15);
+    --accent-2-soft: rgba(224, 162, 100, .15);
+    --grad: linear-gradient(115deg, var(--accent) 0%, var(--accent-2) 100%);
+    /* Text on top of the accent fill. Clay is a mid-tone: white over it is only
+       3.1:1, so the readable choice is a near-black with the same warm cast. */
+    --on-accent: #241810;
+    --accent-shadow: rgba(217, 119, 90, .7);
 
     /* effects */
-    --glass: rgba(255, 255, 255, .03);
-    --glass-hover: rgba(255, 255, 255, .055);
+    --glass: rgba(240, 235, 227, .035);
+    --glass-hover: rgba(240, 235, 227, .06);
     --shadow-1: 0 2px 8px rgba(0, 0, 0, .3);
     --shadow-2: 0 16px 40px -12px rgba(0, 0, 0, .55);
 
@@ -62,31 +68,36 @@
     color-scheme: dark;
 }
 
-/* Light is deliberately a soft paper grey, never white-on-white:
-   no pure #FFF surfaces, no pure black text, muted ambient glow. */
+/* Light is warm paper, never white-on-white: no pure #FFF surfaces, no pure
+   black text, muted ambient glow.
+   The accents are NOT the dark mode's, and not for taste — for contrast. Over
+   this cream, dark mode's clay measures 2.68:1 and its cyan 1.73:1, so both
+   fail even the 3:1 floor for large text. Light mode substitutes darker mixes
+   measured at 4.76:1 and 4.91:1, which clear AA for body-size text and so can
+   safely carry small things like the nav pill or a caption. */
 [data-theme="light"] {
-    --bg: #EDEFF3;
-    --bg-soft: #E5E8EE;
-    --surface: #F8F9FB;
-    --surface-2: #F1F3F7;
-    --border: rgba(17, 24, 33, .085);
-    --border-strong: rgba(17, 24, 33, .18);
+    --bg: #F0EEE6;
+    --bg-soft: #E7E4D9;
+    --surface: #FAF9F5;
+    --surface-2: #F3F1E8;
+    --border: rgba(35, 24, 16, .10);
+    --border-strong: rgba(35, 24, 16, .20);
 
-    --text: #1B2430;
-    --text-dim: #55616F;
-    --text-faint: #86919E;
+    --text: #241C16;
+    --text-dim: #5E564C;
+    --text-faint: #8C8376;
 
-    --teal: #0D8577;
-    --purple: #6D42D0;
-    --teal-soft: rgba(13, 133, 119, .10);
-    --purple-soft: rgba(109, 66, 208, .10);
-    --on-accent: #FFFFFF;
-    --accent-shadow: rgba(13, 133, 119, .38);
+    --accent: #AB4C28;
+    --accent-2: #8F6229;
+    --accent-soft: rgba(171, 76, 40, .10);
+    --accent-2-soft: rgba(143, 98, 41, .10);
+    --on-accent: #FDF8F2;
+    --accent-shadow: rgba(171, 76, 40, .38);
 
-    --glass: rgba(17, 24, 33, .025);
-    --glass-hover: rgba(17, 24, 33, .05);
-    --shadow-1: 0 1px 3px rgba(16, 24, 40, .05);
-    --shadow-2: 0 16px 36px -18px rgba(16, 24, 40, .20);
+    --glass: rgba(35, 24, 16, .03);
+    --glass-hover: rgba(35, 24, 16, .055);
+    --shadow-1: 0 1px 3px rgba(40, 28, 18, .06);
+    --shadow-2: 0 16px 36px -18px rgba(40, 28, 18, .22);
 
     /* the same motion, dialled right down so light stays easy on the eyes */
     --orb-strength: .32;
@@ -153,12 +164,12 @@ ul {
 }
 
 ::selection {
-    background: var(--teal);
+    background: var(--accent);
     color: var(--on-accent);
 }
 
 :focus-visible {
-    outline: 2px solid var(--teal);
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
     border-radius: 4px;
 }
@@ -231,7 +242,7 @@ ul {
 
 .orb-1 {
     --size: 784px;
-    --c: var(--teal);
+    --c: var(--accent);
     --o: calc(.273 * var(--orb-strength));
     translate: calc(var(--mx) * 38px) calc(var(--my) * 30px + var(--sy) * -90px);
     animation: roam-1 34s ease-in-out infinite;
@@ -239,7 +250,7 @@ ul {
 
 .orb-2 {
     --size: 738px;
-    --c: var(--purple);
+    --c: var(--accent-2);
     --o: calc(.229 * var(--orb-strength));
     translate: calc(var(--mx) * -56px) calc(var(--my) * -42px + var(--sy) * 130px);
     animation: roam-2 43s ease-in-out infinite;
@@ -247,7 +258,7 @@ ul {
 
 .orb-3 {
     --size: 702px;
-    --c: var(--teal);
+    --c: var(--accent);
     --o: calc(.147 * var(--orb-strength));
     translate: calc(var(--mx) * 26px) calc(var(--my) * 20px + var(--sy) * -160px);
     animation: roam-3 38s ease-in-out infinite;
@@ -255,7 +266,7 @@ ul {
 
 .orb-4 {
     --size: 662px;
-    --c: var(--purple);
+    --c: var(--accent-2);
     --o: calc(.122 * var(--orb-strength));
     translate: calc(var(--mx) * -80px) calc(var(--my) * 62px + var(--sy) * 70px);
     animation: roam-4 51s ease-in-out infinite;
@@ -420,7 +431,7 @@ ul {
 }
 
 .logo-dot {
-    color: var(--teal);
+    color: var(--accent);
 }
 
 .nav-links {
@@ -491,9 +502,9 @@ ul {
 }
 
 .icon-btn:hover {
-    color: var(--teal);
-    border-color: var(--teal);
-    background: var(--teal-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
     transform: translateY(-1px);
 }
 
@@ -556,7 +567,7 @@ ul {
     font-size: .78rem;
     font-weight: 500;
     letter-spacing: .08em;
-    color: var(--teal);
+    color: var(--accent);
     margin-bottom: 14px;
 }
 
@@ -665,8 +676,8 @@ ul {
 }
 
 .btn-ghost:hover {
-    border-color: var(--teal);
-    color: var(--teal);
+    border-color: var(--accent);
+    color: var(--accent);
     transform: translateY(-2px);
 }
 
@@ -717,8 +728,8 @@ ul {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--teal);
-    color: var(--teal);
+    background: var(--accent);
+    color: var(--accent);
 }
 
 /* The pulse is a copy of the dot scaled out and faded — transform and opacity
@@ -733,9 +744,9 @@ ul {
     animation: ping 2.4s var(--ease) infinite;
 }
 
-.dot--purple {
-    background: var(--purple);
-    color: var(--purple);
+.dot--accent-2 {
+    background: var(--accent-2);
+    color: var(--accent-2);
 }
 
 @keyframes ping {
@@ -786,7 +797,7 @@ ul {
 }
 
 .role-bracket {
-    color: var(--purple);
+    color: var(--accent-2);
     opacity: .7;
 }
 
@@ -798,7 +809,7 @@ ul {
     display: inline-block;
     width: 2px;
     height: 1.05em;
-    background: var(--teal);
+    background: var(--accent);
     animation: blink 1.05s steps(2, start) infinite;
 }
 
@@ -814,13 +825,13 @@ ul {
     font-style: italic;
     color: var(--text-dim);
     padding-left: 16px;
-    border-left: 2px solid var(--teal);
+    border-left: 2px solid var(--accent);
     margin-bottom: 32px;
 }
 
 /* the quote marks carry the accent colour, so the line can go on small screens */
 .hero-tagline .q {
-    color: var(--teal);
+    color: var(--accent);
     font-style: normal;
 }
 
@@ -852,9 +863,9 @@ ul {
 
 .social-link:hover {
     transform: translateY(-3px);
-    color: var(--teal);
-    border-color: var(--teal);
-    background: var(--teal-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
 }
 
 /* avatar */
@@ -915,15 +926,15 @@ ul {
     inset: 0;
     border-radius: 50%;
     border: 1px solid var(--border-strong);
-    border-top-color: var(--teal);
-    border-right-color: var(--purple);
+    border-top-color: var(--accent);
+    border-right-color: var(--accent-2);
     animation: spin 16s linear infinite;
 }
 
 .avatar-ring--inner {
     inset: 7%;
     border-color: var(--border);
-    border-bottom-color: var(--purple);
+    border-bottom-color: var(--accent-2);
     animation-duration: 22s;
     animation-direction: reverse;
 }
@@ -973,7 +984,7 @@ ul {
     width: 3px;
     height: 6px;
     border-radius: 2px;
-    background: var(--teal);
+    background: var(--accent);
     animation: wheel 1.8s var(--ease) infinite;
 }
 
@@ -1201,7 +1212,7 @@ ul {
     border-radius: var(--r-full);
     background: var(--surface);
     border: 1px solid var(--border);
-    color: var(--teal);
+    color: var(--accent);
     box-shadow: var(--shadow-1);
     transition: var(--t-fast);
     transition-property: color, border-color, background, transform;
@@ -1209,8 +1220,8 @@ ul {
 
 .music-swiper .swiper-button-next:hover,
 .music-swiper .swiper-button-prev:hover {
-    border-color: var(--teal);
-    background: var(--teal-soft);
+    border-color: var(--accent);
+    background: var(--accent-soft);
     transform: scale(1.08);
 }
 
@@ -1237,7 +1248,7 @@ ul {
     width: 22px;
     border-radius: var(--r-full);
     opacity: 1;
-    background: var(--teal);
+    background: var(--accent);
 }
 
 /* 280px still fits a 320px-wide phone, so the card size never changes —
@@ -1280,15 +1291,15 @@ ul {
     border-radius: 13px;
     font-size: 1.1rem;
     margin-bottom: 20px;
-    background: var(--teal-soft);
-    color: var(--teal);
+    background: var(--accent-soft);
+    color: var(--accent);
     border: 1px solid var(--border);
     transition: transform var(--t);
 }
 
-.icon-tile--purple {
-    background: var(--purple-soft);
-    color: var(--purple);
+.icon-tile--accent-2 {
+    background: var(--accent-2-soft);
+    color: var(--accent-2);
 }
 
 .card--hover:hover .icon-tile {
@@ -1363,7 +1374,9 @@ ul {
     border: 1px solid rgba(255, 255, 255, .18);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    color: #2DD4BF;
+    /* Deliberately not var(--accent): this sits on a photo overlay that stays
+       dark in both themes, so it needs the light clay even in light mode. */
+    color: #E89B78;
 }
 
 .frame-body h3 {
@@ -1386,7 +1399,7 @@ ul {
     gap: 8px;
     font-size: .8rem;
     font-weight: 600;
-    color: #2DD4BF;
+    color: #E89B78;
 }
 
 .frame-action i {
@@ -1471,8 +1484,9 @@ ul {
 }
 
 .album-close:hover {
-    color: #FF6B6B;
-    border-color: #FF6B6B;
+    /* still reads as "close", but pulled warm so it does not fight the clay */
+    color: #E0503F;
+    border-color: #E0503F;
 }
 
 .photo-grid {
@@ -1663,7 +1677,7 @@ ul {
 
 a.contact-item:hover {
     transform: translateX(5px);
-    border-color: var(--teal);
+    border-color: var(--accent);
 }
 
 .contact-item .icon-tile {
@@ -1712,7 +1726,7 @@ a.contact-item:hover {
 }
 
 .footer .heart {
-    color: #FF5D73;
+    color: var(--accent);
 }
 
 /* ---------- 13b. OFF-SCREEN PAUSE ---------- */
@@ -1922,6 +1936,200 @@ a.contact-item:hover {
 
     .frame-body {
         padding: 20px 18px;
+    }
+}
+
+/* ---------- 15b. DESK BUDDY ----------
+   A small 8-bit character that walks along the bottom of the viewport.
+   - Movement: script.js writes --x (px from the left edge) and --face (1 or -1)
+     and nothing else. The walk itself is a CSS transition on `translate`, so a
+     stroll across the screen costs one compositor animation, not a rAF loop
+     writing a transform every frame.
+   - The 8-bit part: script.js sets that transition's timing function to
+     steps(n), where n is the distance divided by one sprite pixel. The
+     character therefore teleports one pixel at a time on a fixed grid, the way
+     a sprite on a tile-based machine did, instead of sliding smoothly. Same
+     single compositor animation either way — the steps cost nothing extra.
+   - Layering: above the page, below the nav (100) and the lightbox (200).
+   - The wrapper never takes a pointer; only the sprite does, so the character
+     cannot swallow clicks on the content it happens to be standing over. */
+.buddy {
+    position: fixed;
+    left: 0;
+    bottom: 14px;
+    z-index: 90;
+    pointer-events: none;
+    translate: var(--x, 40px) 0;
+    transition: translate var(--walk-ms, 2400ms) steps(40, end), opacity .35s var(--ease);
+    will-change: translate;
+}
+
+/* parked while a modal owns the screen */
+body.no-scroll .buddy {
+    opacity: 0;
+}
+
+.buddy-sprite {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    pointer-events: auto;
+    scale: var(--face, 1) 1;
+    transition: scale .22s var(--ease);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.buddy-sprite svg {
+    display: block;
+    overflow: visible;
+    /* a hard offset shadow, not a blur: a soft glow under a pixel sprite is the
+       one thing that instantly breaks the illusion */
+    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .4));
+}
+
+[data-theme="light"] .buddy-sprite svg {
+    filter: drop-shadow(0 2px 0 rgba(40, 28, 18, .16));
+}
+
+.buddy-px {
+    fill: var(--accent);
+}
+
+/* the eye pixels are knocked out of the body in the darker shade */
+.buddy-px--eye {
+    fill: #2E1A0E;
+}
+
+[data-theme="light"] .buddy-px--eye {
+    fill: #F0EEE6;
+}
+
+/* Two frames, swapped on a step-end cycle so the sprite snaps between poses
+   with nothing in between — no cross-fade, no tween. Frame B is the only one
+   that moves, so frame A holds the first half of every cycle. */
+.buddy-frame--b {
+    opacity: 0;
+}
+
+.buddy.is-walking .buddy-frame--a {
+    animation: buddy-frame-a .3s step-end infinite;
+}
+
+.buddy.is-walking .buddy-frame--b {
+    animation: buddy-frame-b .3s step-end infinite;
+}
+
+@keyframes buddy-frame-a {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes buddy-frame-b {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* the hop is quantised too: up four pixels, hold, down */
+.buddy.is-hopping .buddy-sprite {
+    animation: buddy-hop .48s step-end;
+}
+
+@keyframes buddy-hop {
+
+    0%,
+    100% {
+        translate: 0 0;
+    }
+
+    25% {
+        translate: 0 -8px;
+    }
+
+    50% {
+        translate: 0 -16px;
+    }
+
+    75% {
+        translate: 0 -8px;
+    }
+}
+
+.buddy-bubble {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: 8px;
+    translate: -50% 0;
+    padding: 7px 12px;
+    border-radius: var(--r-full);
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-2);
+    color: var(--text);
+    font-size: .76rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    scale: .85;
+    transform-origin: 50% 100%;
+    transition: opacity .2s var(--ease), scale .2s var(--ease-out);
+}
+
+.buddy.is-talking .buddy-bubble {
+    opacity: 1;
+    scale: 1;
+}
+
+/* Near a screen edge the centred bubble would hang off it, so script.js
+   re-anchors it to whichever side has room. */
+.buddy.talk-left .buddy-bubble {
+    left: 0;
+    translate: 0 0;
+    transform-origin: 22px 100%;
+}
+
+.buddy.talk-right .buddy-bubble {
+    left: auto;
+    right: 0;
+    translate: 0 0;
+    transform-origin: calc(100% - 22px) 100%;
+}
+
+@media (max-width: 640px) {
+    /* 3px per sprite pixel. Both numbers must stay whole multiples of the
+       11x8 grid, or the pixels land on half-device-pixels and blur. */
+    .buddy-sprite svg {
+        width: 33px;
+        height: 24px;
+    }
+
+    .buddy-bubble {
+        font-size: .7rem;
+    }
+
+    /* On a phone the bottom strip of the screen is nearly always a button or a
+       link — the hero's own call to action sits right there. A 34px character
+       wandering over it must not be able to swallow the tap, so on small
+       screens it gives up its pointer entirely and is decoration only. */
+    .buddy-sprite {
+        pointer-events: none;
+    }
+
+    .buddy {
+        bottom: 8px;
+        opacity: .92;
     }
 }
 

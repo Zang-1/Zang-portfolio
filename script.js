@@ -21,7 +21,7 @@
             const dark = root.dataset.theme !== 'light';
             icon.className = dark ? 'fas fa-moon' : 'fas fa-sun';
             btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
-            if (meta) meta.content = dark ? '#0B0F14' : '#EDEFF3';
+            if (meta) meta.content = dark ? '#171512' : '#F0EEE6';
         };
 
         btn.addEventListener('click', () => {
@@ -604,6 +604,181 @@
             else if (e.key === 'ArrowLeft') show(index - 1);
             else if (e.key === 'ArrowRight') show(index + 1);
         });
+    })();
+
+    /* ---------- 9. DESK BUDDY ----------
+       The character strolls to a random spot, rests, then picks another one.
+       There is no animation loop here on purpose: each stroll is a single CSS
+       transition on `translate`, handed to the compositor, so the walk costs
+       the main thread two style writes per trip rather than one per frame.
+       Timers stop entirely while the tab is hidden. */
+    (function buddy() {
+        const el = $('#buddy');
+        const sprite = $('#buddySprite');
+        const bubble = $('#buddyBubble');
+        const svg = $('#buddySvg');
+        if (!el || !sprite || !bubble || !svg) return;
+
+        /* The artwork. 'X' is a body pixel, 'o' an eye pixel, '.' is empty.
+           Two frames: legs tucked, then legs spread. Edit these strings to
+           redraw the character — nothing else knows what it looks like. */
+        const FRAMES = [
+            [
+                '..X.....X..',
+                '...X...X...',
+                '..XXXXXXX..',
+                '.XXoXXXoXX.',
+                'XXXXXXXXXXX',
+                'X.XXXXXXX.X',
+                'X.X.....X.X',
+                '...XX.XX...'
+            ],
+            [
+                '..X.....X..',
+                'X..X...X..X',
+                'X.XXXXXXX.X',
+                'XXXoXXXoXXX',
+                'XXXXXXXXXXX',
+                '.XXXXXXXXX.',
+                '..X.....X..',
+                '.X.......X.'
+            ]
+        ];
+
+        const NS = 'http://www.w3.org/2000/svg';
+        const COLS = FRAMES[0][0].length;
+
+        // Draw both frames once, as one <rect> per lit pixel.
+        FRAMES.forEach((rows, i) => {
+            const g = document.createElementNS(NS, 'g');
+            g.setAttribute('class', 'buddy-frame buddy-frame--' + (i ? 'b' : 'a'));
+            rows.forEach((row, y) => {
+                for (let cx = 0; cx < row.length; cx++) {
+                    const ch = row[cx];
+                    if (ch === '.') continue;
+                    const r = document.createElementNS(NS, 'rect');
+                    r.setAttribute('x', cx);
+                    r.setAttribute('y', y);
+                    r.setAttribute('width', 1);
+                    r.setAttribute('height', 1);
+                    r.setAttribute('class', ch === 'o' ? 'buddy-px buddy-px--eye' : 'buddy-px');
+                    g.appendChild(r);
+                }
+            });
+            svg.appendChild(g);
+        });
+
+        const MARGIN = 12;     // keep this clear of both edges
+        const SPEED = 68;      // px per second
+        const lines = [
+            'Hey there 👾',
+            'Nice scroll.',
+            'No Pain No Gain.',
+            'Go say hi to Giang!',
+            'I live down here.',
+            'Insert coin.'
+        ];
+
+        let x = 40;
+        let timer = 0;
+        let talkTimer = 0;
+
+        const spriteW = () => sprite.getBoundingClientRect().width || 44;
+        // One sprite pixel on screen. The character only ever stands on a
+        // multiple of this, so its edges stay aligned to its own pixel grid.
+        const unit = () => spriteW() / COLS;
+        const maxX = () => Math.max(MARGIN, window.innerWidth - spriteW() - MARGIN);
+        const rand = (lo, hi) => lo + Math.random() * (hi - lo);
+        const snap = (v) => Math.round(v / unit()) * unit();
+
+        const place = () => el.style.setProperty('--x', x.toFixed(2) + 'px');
+
+        // Reduced motion: the character still shows up, it just stands still.
+        if (reduceMotion) {
+            x = Math.min(40, maxX());
+            place();
+            return;
+        }
+
+        const rest = () => {
+            el.classList.remove('is-walking');
+            timer = setTimeout(stroll, rand(1400, 5200));
+        };
+
+        const stroll = () => {
+            const limit = maxX();
+            // aim somewhere meaningfully far away, so it does not shuffle on the spot
+            let target;
+            do {
+                target = snap(rand(MARGIN, limit));
+            } while (Math.abs(target - x) < Math.min(140, limit * .4));
+
+            const dist = Math.abs(target - x);
+            // One step per sprite pixel travelled: that count IS the animation's
+            // timing function, which is what makes the walk read as 8-bit.
+            const steps = Math.max(1, Math.round(dist / unit()));
+            const ms = (dist / SPEED) * 1000;
+
+            el.style.setProperty('--face', target < x ? '-1' : '1');
+            el.style.setProperty('--walk-ms', Math.round(ms) + 'ms');
+            el.style.transitionTimingFunction = 'steps(' + steps + ', end), ease';
+            x = target;
+            place();
+            el.classList.add('is-walking');
+
+            timer = setTimeout(rest, ms);
+        };
+
+        const say = (text) => {
+            bubble.textContent = text;
+
+            // Anchor the bubble away from whichever edge is too close. Measured
+            // after the text is in, because the bubble sizes to its content.
+            el.classList.remove('talk-left', 'talk-right');
+            const half = (bubble.offsetWidth - spriteW()) / 2;
+            if (half > 0) {
+                if (x < half + MARGIN) el.classList.add('talk-left');
+                else if (x + spriteW() + half > window.innerWidth - MARGIN) el.classList.add('talk-right');
+            }
+
+            el.classList.add('is-talking');
+            clearTimeout(talkTimer);
+            talkTimer = setTimeout(() => el.classList.remove('is-talking'), 2600);
+        };
+
+        sprite.addEventListener('click', () => {
+            say(lines[Math.floor(Math.random() * lines.length)]);
+            el.classList.add('is-hopping');
+            setTimeout(() => el.classList.remove('is-hopping'), 520);
+        });
+
+        // A resize can leave the character stranded past the new right edge.
+        let resizeTimer = 0;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const limit = maxX();
+                if (x > limit) {
+                    x = snap(limit);
+                    el.style.setProperty('--walk-ms', '300ms');
+                    place();
+                }
+            }, 150);
+        }, { passive: true });
+
+        // Nothing should tick while the tab is in the background.
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearTimeout(timer);
+                el.classList.remove('is-walking');
+            } else {
+                timer = setTimeout(stroll, 600);
+            }
+        });
+
+        x = snap(x);
+        place();
+        timer = setTimeout(stroll, 1800);
     })();
 
 })();

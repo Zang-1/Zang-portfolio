@@ -8,7 +8,7 @@
         content="Bao Giang, IT Student at Van Lang University. Passionate about technology, motorcycles and billiards. No Pain No Gain.">
     <meta name="keywords" content="Bao Giang, IT Student, Van Lang University, Portfolio">
     <meta name="author" content="Bao Giang">
-    <meta name="theme-color" content="#0B0F14">
+    <meta name="theme-color" content="#171512">
     <title>Bao Giang</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -30,7 +30,7 @@
     <!-- Swiper -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css">
 
-    <link rel="stylesheet" href="style.css?v=5.3">
+    <link rel="stylesheet" href="style.css?v=5.8">
 
     <!-- restore saved theme before first paint to avoid a flash -->
     <script>
@@ -89,7 +89,7 @@
                 <div class="hero-content">
                     <div class="hero-badges">
                         <span class="badge"><i class="dot"></i> Available for opportunities</span>
-                        <span class="badge badge--clock"><i class="dot dot--purple"></i> Saigon <span
+                        <span class="badge badge--clock"><i class="dot dot--accent-2"></i> Saigon <span
                                 id="heroClock">--:--</span></span>
                     </div>
 
@@ -219,7 +219,7 @@
                     </article>
 
                     <article class="card card--hover card--accent about-card" data-reveal style="--d:1">
-                        <div class="icon-tile icon-tile--purple"><i class="fas fa-heart"></i></div>
+                        <div class="icon-tile icon-tile--accent-2"><i class="fas fa-heart"></i></div>
                         <h3>Passions</h3>
                         <p>When I'm not coding, you'll find me playing <strong>billiards</strong>, riding my
                             <strong>motorcycle</strong> through the city, or creating content for social media.</p>
@@ -290,7 +290,7 @@
                             </span>
                         </a>
                         <a href="tel:0364888253" class="contact-item">
-                            <span class="icon-tile icon-tile--purple"><i class="fas fa-phone"></i></span>
+                            <span class="icon-tile icon-tile--accent-2"><i class="fas fa-phone"></i></span>
                             <span>
                                 <span class="contact-label">Phone</span>
                                 <span class="contact-value">0364 888 253</span>
@@ -329,8 +329,21 @@
         </div>
     </div>
 
+    <!-- ===== DESK BUDDY =====
+         A small 8-bit character that walks the bottom of the viewport. The two
+         sprite frames are drawn by script.js from the pixel maps it holds, so
+         the artwork lives in one legible place instead of ~150 <rect> tags.
+         Purely decorative, so it is hidden from the accessibility tree; the
+         sprite itself is the only part that takes a pointer. -->
+    <div class="buddy" id="buddy" aria-hidden="true">
+        <div class="buddy-bubble" id="buddyBubble"></div>
+        <button class="buddy-sprite" id="buddySprite" tabindex="-1">
+            <svg id="buddySvg" viewBox="0 0 11 8" width="44" height="32" shape-rendering="crispEdges"></svg>
+        </button>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js"></script>
-    <script src="script.js?v=5.3"></script>
+    <script src="script.js?v=5.8"></script>
 </body>
 
 </html>
