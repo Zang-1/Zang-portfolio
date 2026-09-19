@@ -1095,6 +1095,65 @@ ul {
     color: var(--text-faint);
 }
 
+.shuffle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 14px;
+    padding: 8px 18px;
+    border-radius: var(--r-full);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: .82rem;
+    font-weight: 600;
+    transition: var(--t-fast);
+    transition-property: color, border-color, background, transform;
+}
+
+.shuffle-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    transform: translateY(-2px);
+}
+
+.shuffle-btn:active {
+    transform: translateY(0);
+}
+
+.shuffle-btn i {
+    font-size: .88rem;
+}
+
+/* one turn of the icon per press, so a shuffle that happens to leave the
+   centre card alone still reads as "it did something" */
+.shuffle-btn.is-spinning i {
+    animation: shuffle-spin .5s var(--ease-out);
+}
+
+@keyframes shuffle-spin {
+    from {
+        rotate: 0deg;
+    }
+
+    to {
+        rotate: 360deg;
+    }
+}
+
+/* announced to screen readers, never shown */
+.shuffle-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 /* 3D coverflow carousel */
 .music-swiper {
     width: 100%;
@@ -1304,6 +1363,256 @@ ul {
 
 .card--hover:hover .icon-tile {
     transform: scale(1.08) rotate(-5deg);
+}
+
+/* ---------- 10b. MILESTONES ----------
+   Years on a rail, each one a collapsed accordion. Collapsed, a year shows
+   only its summary line; the entries appear on click, and years open
+   independently so any number can be open at once.
+   The rail is drawn on the <ol>, not per group, so it cannot develop gaps
+   between years as panels open and close. */
+.timeline {
+    position: relative;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    --rail: 8px;
+    --node: 16px;
+    --gutter: 40px;
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    bottom: 14px;
+    left: var(--rail);
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg,
+            var(--accent-soft) 0%,
+            var(--border-strong) 10%,
+            var(--border-strong) 74%,
+            transparent 100%);
+}
+
+.tl-group {
+    position: relative;
+    padding-left: var(--gutter);
+}
+
+/* the year's node on the rail; it fills in once the year is open */
+.tl-group::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    left: calc(var(--rail) + 1px - var(--node) / 2);
+    width: var(--node);
+    height: var(--node);
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+    transition: background var(--t), box-shadow var(--t);
+    z-index: 1;
+}
+
+.tl-group.is-open::before {
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.tl-head {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.tl-toggle {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px 12px 12px;
+    border-radius: var(--r-md);
+    border: 1px solid transparent;
+    transition: background var(--t-fast), border-color var(--t-fast);
+}
+
+.tl-toggle:hover {
+    background: var(--glass);
+    border-color: var(--border);
+}
+
+.tl-group.is-open .tl-toggle {
+    background: var(--glass);
+    border-color: var(--border);
+}
+
+.tl-year {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    line-height: 1.1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+}
+
+.tl-summary {
+    font-size: .95rem;
+    color: var(--text-dim);
+    transition: color var(--t-fast);
+}
+
+.tl-toggle:hover .tl-summary {
+    color: var(--text);
+}
+
+.tl-chevron {
+    font-size: .78rem;
+    color: var(--text-faint);
+    transition: transform var(--t), color var(--t);
+}
+
+.tl-group.is-open .tl-chevron {
+    transform: rotate(180deg);
+    color: var(--accent);
+}
+
+/* The panel animates on grid-template-rows 0fr -> 1fr rather than max-height,
+   so it opens to exactly the content height with no guessed maximum. If a
+   browser cannot animate it, 0fr still collapses the row, so the accordion
+   degrades to an instant open/close rather than breaking. */
+.tl-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .38s var(--ease);
+}
+
+.tl-group.is-open .tl-panel {
+    grid-template-rows: 1fr;
+}
+
+.tl-panel-inner {
+    overflow: hidden;
+    /* keeps the collapsed content out of the accessibility tree too */
+    visibility: hidden;
+    transition: visibility .38s;
+}
+
+.tl-group.is-open .tl-panel-inner {
+    visibility: visible;
+}
+
+.tl-items {
+    list-style: none;
+    display: grid;
+    gap: 2px;
+    /* a readable measure, and it stops the highlighted row from stretching to
+       the full 1140px container with nothing in the right half of it */
+    max-width: 720px;
+    padding: 8px 0 14px 12px;
+}
+
+.tl-item {
+    position: relative;
+    display: grid;
+    /* fixed month column so every entry's text starts on one line */
+    grid-template-columns: 58px 1fr;
+    gap: 14px;
+    align-items: baseline;
+    padding: 9px 12px;
+    border-radius: var(--r-sm);
+    border: 1px solid transparent;
+    transition: background var(--t-fast), border-color var(--t-fast);
+}
+
+.tl-item:hover {
+    background: var(--glass);
+    border-color: var(--border);
+}
+
+.tl-when {
+    font-family: var(--font-display);
+    font-size: .8rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-faint);
+    transition: color var(--t-fast);
+}
+
+.tl-item:hover .tl-when {
+    color: var(--accent);
+}
+
+.tl-what {
+    font-size: .94rem;
+    color: var(--text-dim);
+}
+
+/* the most recent entry, and the only one that gets to keep its colour */
+.tl-item--now {
+    background: var(--accent-soft);
+    border-color: var(--border);
+}
+
+.tl-item--now .tl-when,
+.tl-item--now .tl-what {
+    color: var(--text);
+}
+
+.tl-heart {
+    color: var(--accent);
+}
+
+/* Phones: the summary cannot sit beside a 1.5rem year, and 58px of month
+   column is most of the width, so both drop onto their own line. */
+@media (max-width: 640px) {
+    .timeline {
+        --gutter: 30px;
+        --node: 13px;
+    }
+
+    .tl-group::before {
+        top: 19px;
+    }
+
+    .tl-toggle {
+        grid-template-columns: 1fr auto;
+        align-items: start;
+        gap: 4px 12px;
+        padding: 12px;
+    }
+
+    .tl-year {
+        font-size: 1.3rem;
+    }
+
+    .tl-summary {
+        grid-column: 1;
+        font-size: .88rem;
+    }
+
+    .tl-chevron {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        align-self: center;
+    }
+
+    .tl-items {
+        padding-left: 4px;
+    }
+
+    .tl-item {
+        grid-template-columns: 1fr;
+        gap: 2px;
+        padding: 10px 12px;
+    }
+
+    .tl-when {
+        color: var(--accent);
+    }
 }
 
 /* ---------- 11. GALLERY ---------- */

@@ -325,7 +325,8 @@
            stops a card being torn down and rebuilt on a quick back-and-forth. */
         const MOUNT = 2;
         const KEEP = 3;
-        const total = $$('.spotify-embed', node).length;
+        const holders = $$('.spotify-embed', node);
+        const total = holders.length;
         let live = false;
 
         const mount = (holder) => {
@@ -348,6 +349,30 @@
             if (!holder.classList.contains('is-mounted')) return;
             holder.replaceChildren();
             holder.classList.remove('is-mounted');
+        };
+
+        /* Shuffle.
+           The tracks are permuted by moving their data-src between the slide
+           elements, which never move. Reordering the slides themselves would
+           be the obvious approach and is the wrong one here for the same
+           reason the mounting above is lazy: relocating an iframe in the DOM
+           makes the browser reload it, so a shuffle would reboot every player
+           it touched. Swapping the source strings leaves the DOM alone.
+           Any mounted player is torn down first, because an iframe keeps
+           playing whatever it already loaded no matter what its holder's
+           dataset now says. */
+        const order = holders.map(h => ({ src: h.dataset.src, title: h.dataset.title }));
+
+        const shuffle = () => {
+            for (let i = order.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [order[i], order[j]] = [order[j], order[i]];
+            }
+            holders.forEach((h, i) => {
+                unmount(h);
+                h.dataset.src = order[i].src;
+                h.dataset.title = order[i].title;
+            });
         };
 
         const sync = () => {
@@ -399,6 +424,27 @@
             if (document.readyState === 'complete') idle();
             else window.addEventListener('load', idle, { once: true });
         };
+
+        // A fresh order on every visit. This runs before anything is mounted,
+        // so at load time it costs nothing but the swap itself.
+        shuffle();
+
+        const btn = $('#shuffleBtn');
+        const status = $('#shuffleStatus');
+        if (btn) {
+            let spinTimer = 0;
+            btn.addEventListener('click', () => {
+                shuffle();
+                // back to the front of the new order, then re-mount around it
+                if (swiper.slideToLoop) swiper.slideToLoop(0, reduceMotion ? 0 : 400);
+                sync();
+
+                if (status) status.textContent = 'Shuffled. ' + total + ' tracks in a new order.';
+                btn.classList.add('is-spinning');
+                clearTimeout(spinTimer);
+                spinTimer = setTimeout(() => btn.classList.remove('is-spinning'), 520);
+            });
+        }
 
         if ('IntersectionObserver' in window) {
             const io = new IntersectionObserver((entries) => {
@@ -779,6 +825,26 @@
         x = snap(x);
         place();
         timer = setTimeout(stroll, 1800);
+    })();
+
+    /* ---------- 10. JOURNEY ACCORDION ----------
+       Each year toggles on its own, so any number can be open at once.
+       The open state lives in a class; CSS does the animating. Nothing here
+       has to tell the nav its offsets moved — the ResizeObserver on <body> in
+       module 4 already re-measures when the page height changes. */
+    (function journey() {
+        const toggles = $$('.tl-toggle');
+        if (!toggles.length) return;
+
+        toggles.forEach(btn => {
+            const group = btn.closest('.tl-group');
+            if (!group) return;
+
+            btn.addEventListener('click', () => {
+                const open = group.classList.toggle('is-open');
+                btn.setAttribute('aria-expanded', String(open));
+            });
+        });
     })();
 
 })();

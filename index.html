@@ -30,7 +30,7 @@
     <!-- Swiper -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css">
 
-    <link rel="stylesheet" href="style.css?v=5.8">
+    <link rel="stylesheet" href="style.css?v=6.2">
 
     <!-- restore saved theme before first paint to avoid a flash -->
     <script>
@@ -67,6 +67,7 @@
                 <li><a href="#hero" class="nav-link">Home</a></li>
                 <li><a href="#music" class="nav-link">Music</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#milestones" class="nav-link">Journey</a></li>
                 <li><a href="#gallery" class="nav-link">Gallery</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
@@ -155,6 +156,11 @@
                                 class="bar"></span><span class="bar"></span>
                         </div>
                         <p class="music-label">Currently Vibing To</p>
+                        <button class="shuffle-btn" id="shuffleBtn" type="button">
+                            <i class="fas fa-shuffle" aria-hidden="true"></i>
+                            <span>Shuffle</span>
+                        </button>
+                        <p class="shuffle-status" id="shuffleStatus" role="status" aria-live="polite"></p>
                     </div>
 
                     <div class="swiper music-swiper">
@@ -234,6 +240,128 @@
                 </div>
             </div>
         </section>
+        <!-- ===== MILESTONES =====
+             Each year is a collapsed accordion: the summary is what you see
+             first, the entries appear on click. Years open independently, so
+             any number of them can be open at once.
+             To add an entry copy a .tl-item; to add a year copy a .tl-group and
+             give its button a new aria-controls matching the panel id. -->
+        <section class="section" id="milestones">
+            <div class="container">
+                <header class="section-head" data-reveal>
+                    <span class="section-tag">how i got here</span>
+                    <h2 class="section-title">My <span class="grad-text">Journey</span></h2>
+                    <p class="section-sub">Pick a year to see what happened in it.</p>
+                </header>
+
+                <ol class="timeline">
+                    <li class="tl-group" data-reveal style="--d:0">
+                        <h3 class="tl-head">
+                            <button class="tl-toggle" type="button" aria-expanded="false" aria-controls="yr2024">
+                                <span class="tl-year">2024</span>
+                                <span class="tl-summary">First set of wheels, and the first day of university.</span>
+                                <i class="fas fa-chevron-down tl-chevron" aria-hidden="true"></i>
+                            </button>
+                        </h3>
+                        <div class="tl-panel" id="yr2024">
+                            <div class="tl-panel-inner">
+                                <ul class="tl-items">
+                                    <li class="tl-item">
+                                        <span class="tl-when">Apr</span>
+                                        <p class="tl-what">Got my first bike, a Honda Winner X</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">May</span>
+                                        <p class="tl-what">Passed my A1 motorcycle licence</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">Sep</span>
+                                        <p class="tl-what">Started university</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="tl-group" data-reveal style="--d:1">
+                        <h3 class="tl-head">
+                            <button class="tl-toggle" type="button" aria-expanded="false" aria-controls="yr2025">
+                                <span class="tl-year">2025</span>
+                                <span class="tl-summary">New habits, new friends, and a place of my own.</span>
+                                <i class="fas fa-chevron-down tl-chevron" aria-hidden="true"></i>
+                            </button>
+                        </h3>
+                        <div class="tl-panel" id="yr2025">
+                            <div class="tl-panel-inner">
+                                <ul class="tl-items">
+                                    <li class="tl-item">
+                                        <span class="tl-when">Jan</span>
+                                        <p class="tl-what">Switched to an iPhone 15 Pro Max after years on Android</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">Mar</span>
+                                        <p class="tl-what">Started taking billiards seriously</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">Sep</span>
+                                        <p class="tl-what">Military training at VLU, and a lot of new friends with it</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">Oct</span>
+                                        <p class="tl-what">Moved into a new place</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="tl-group" data-reveal style="--d:2">
+                        <h3 class="tl-head">
+                            <button class="tl-toggle" type="button" aria-expanded="false" aria-controls="yr2026">
+                                <span class="tl-year">2026</span>
+                                <span class="tl-summary">The year the saving paid off &mdash; and one date that outranked all of it.</span>
+                                <i class="fas fa-chevron-down tl-chevron" aria-hidden="true"></i>
+                            </button>
+                        </h3>
+                        <div class="tl-panel" id="yr2026">
+                            <div class="tl-panel-inner">
+                                <ul class="tl-items">
+                                    <li class="tl-item">
+                                        <span class="tl-when">Jan</span>
+                                        <p class="tl-what">Rebuilt the Winner X for Tết, paid for with a full year of saving</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">Mar</span>
+                                        <p class="tl-what">Signed up for C1 driving lessons</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">May</span>
+                                        <p class="tl-what">Saved up and bought a DJI Action 4</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">Jun</span>
+                                        <p class="tl-what">Bought a Rhino cue with a Dragon shaft</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">Jul</span>
+                                        <p class="tl-what">Passed the C1 test, licence in hand two days later</p>
+                                    </li>
+                                    <li class="tl-item">
+                                        <span class="tl-when">Aug</span>
+                                        <p class="tl-what">Got my first car, a Mitsubishi Destinator</p>
+                                    </li>
+                                    <li class="tl-item tl-item--now">
+                                        <span class="tl-when">Aug 25</span>
+                                        <p class="tl-what">Made it official with Bảo Châu <span class="tl-heart">&hearts;</span></p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
         <!-- ===== GALLERY ===== -->
         <section class="section" id="gallery">
             <div class="container">
@@ -343,7 +471,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js"></script>
-    <script src="script.js?v=5.8"></script>
+    <script src="script.js?v=6.2"></script>
 </body>
 
 </html>
