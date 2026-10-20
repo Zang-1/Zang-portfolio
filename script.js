@@ -848,10 +848,12 @@
     })();
 
     /* ---------- 11. 3D SHOWROOM ----------
-       three.js and the scene live in showroom.js and are only fetched the
-       first time the view opens (or the button is hovered, to get a head
-       start). Closing it stops the render loop rather than tearing it down,
-       so a second visit opens instantly. */
+       The scene lives in showroom.js, added as a plain <script> the first
+       time the view opens (or the button is hovered, to get a head start);
+       it pulls in three.js itself. A plain script rather than import() so
+       the view also works with index.html opened straight from disk.
+       Closing stops the render loop rather than tearing it down, so a
+       second visit opens instantly. */
     (function showroom() {
         const openBtn = $('#open3d');
         const box = $('#showroom');
@@ -863,8 +865,21 @@
         let loading = null;
         let autoRotate = !reduceMotion;
 
-        const load = () => loading || (loading = import('./showroom.js?v=6.3')
-            .then(m => m.mount($('#srStage'), { reduceMotion }))
+        const loadingText = $('#srLoadingText');
+        const loadingCopy = loadingText.textContent;
+        let fetching = null;
+
+        const fetchScene = () => fetching || (fetching = new Promise((resolve, reject) => {
+            if (window.Showroom) return resolve(window.Showroom);
+            const tag = document.createElement('script');
+            tag.src = 'showroom.js?v=6.4';
+            tag.onload = () => resolve(window.Showroom);
+            tag.onerror = () => { tag.remove(); fetching = null; reject(new Error('showroom.js failed to load')); };
+            document.head.appendChild(tag);
+        }));
+
+        const load = () => loading || (loading = fetchScene()
+            .then(lib => lib.mount($('#srStage'), { reduceMotion }))
             .then(s => {
                 scene = s;
                 scene.setAutoRotate(autoRotate);
@@ -876,13 +891,16 @@
                 console.error(err);
                 loading = null;
                 box.classList.add('is-failed');
-                $('#srLoadingText').textContent = 'The 3D view could not load. Check your connection and try again.';
+                loadingText.textContent = err && err.code === 'webgl'
+                    ? 'This browser has 3D graphics (WebGL) switched off. Turn on hardware acceleration in its settings, then try again.'
+                    : 'The 3D view could not load. Check your connection and try again.';
             }));
 
         const isOpen = () => box.classList.contains('is-open');
 
         const open = () => {
             box.classList.remove('is-failed');
+            loadingText.textContent = loadingCopy;
             box.classList.add('is-open');
             document.body.classList.add('no-scroll');
             if (scene) scene.start();
@@ -902,7 +920,7 @@
 
         openBtn.addEventListener('click', open);
         // only fetch on hover; the scene itself is built once it is opened
-        openBtn.addEventListener('pointerenter', () => import('./showroom.js?v=6.3').catch(() => { }), { once: true });
+        openBtn.addEventListener('pointerenter', () => fetchScene().catch(() => { }), { once: true });
         $('#srClose').addEventListener('click', close);
 
         spinBtn.addEventListener('click', () => {
