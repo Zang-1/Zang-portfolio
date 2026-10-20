@@ -847,4 +847,84 @@
         });
     })();
 
+    /* ---------- 11. 3D SHOWROOM ----------
+       three.js and the scene live in showroom.js and are only fetched the
+       first time the view opens (or the button is hovered, to get a head
+       start). Closing it stops the render loop rather than tearing it down,
+       so a second visit opens instantly. */
+    (function showroom() {
+        const openBtn = $('#open3d');
+        const box = $('#showroom');
+        if (!openBtn || !box) return;
+
+        const spinBtn = $('#srSpin');
+        const focusBtns = $$('[data-focus]', box);
+        let scene = null;
+        let loading = null;
+        let autoRotate = !reduceMotion;
+
+        const load = () => loading || (loading = import('./showroom.js?v=6.3')
+            .then(m => m.mount($('#srStage'), { reduceMotion }))
+            .then(s => {
+                scene = s;
+                scene.setAutoRotate(autoRotate);
+                box.classList.add('is-ready');
+                if (isOpen()) scene.start();
+                return s;
+            })
+            .catch(err => {
+                console.error(err);
+                loading = null;
+                box.classList.add('is-failed');
+                $('#srLoadingText').textContent = 'The 3D view could not load. Check your connection and try again.';
+            }));
+
+        const isOpen = () => box.classList.contains('is-open');
+
+        const open = () => {
+            box.classList.remove('is-failed');
+            box.classList.add('is-open');
+            document.body.classList.add('no-scroll');
+            if (scene) scene.start();
+            else load();
+            $('#srClose').focus();
+        };
+
+        const close = () => {
+            box.classList.remove('is-open');
+            document.body.classList.remove('no-scroll');
+            if (scene) scene.stop();
+            openBtn.focus();
+        };
+
+        const paintSpin = () => spinBtn.setAttribute('aria-pressed', String(autoRotate));
+        paintSpin();
+
+        openBtn.addEventListener('click', open);
+        // only fetch on hover; the scene itself is built once it is opened
+        openBtn.addEventListener('pointerenter', () => import('./showroom.js?v=6.3').catch(() => { }), { once: true });
+        $('#srClose').addEventListener('click', close);
+
+        spinBtn.addEventListener('click', () => {
+            autoRotate = !autoRotate;
+            paintSpin();
+            if (scene) scene.setAutoRotate(autoRotate);
+        });
+
+        focusBtns.forEach(btn => btn.addEventListener('click', () => {
+            focusBtns.forEach(b => b.classList.toggle('is-active', b === btn));
+            if (scene) scene.focus(btn.dataset.focus);
+        }));
+
+        document.addEventListener('keydown', (e) => {
+            if (isOpen() && e.key === 'Escape') close();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!scene || !isOpen()) return;
+            if (document.hidden) scene.stop();
+            else scene.start();
+        });
+    })();
+
 })();
